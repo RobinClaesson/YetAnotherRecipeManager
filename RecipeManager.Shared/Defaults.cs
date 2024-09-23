@@ -2,5 +2,5 @@
 
 public static class Defaults
 {
-    public const string DbPath = "RecipeManager.sqlite";
+    public const string DbPath = "RecipeManager.db";
 }
