@@ -20,3 +20,9 @@ public class ListRecipesOptions : BaseOptions
     [Option('t', "tag", HelpText = "Filter by tag")]
     public string? Tag { get; set; }
 }
+
+[Verb("add-recipe", HelpText = "Add a recipe")]
+public class AddRecipeOptions : BaseOptions
+{
+
+}
