@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecipeManager.API.Services;
+using RecipeManager.Shared.Contracts;
+using RecipeManager.Shared.Models;
 
 namespace RecipeManager.API.Controllers;
 
@@ -19,5 +21,12 @@ public class RecipeController : ControllerBase
     public ActionResult<IEnumerable<string>> RecipeNames()
     {
         return Ok(_recipesService.ListAllRecipes());
+    }
+
+    [HttpPost]
+    public ActionResult<Recipe> AddRecipe([FromBody] RecipeContract recipe)
+    {
+        var posted = _recipesService.AddRecipe(recipe);
+        return Ok(posted);
     }
 }
