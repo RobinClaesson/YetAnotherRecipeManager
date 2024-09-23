@@ -20,7 +20,7 @@ public static class UnitsParser
 {
     public static bool TryParse(string input, out Units result)
     {
-        switch (input.ToLower())
+        switch (input.Trim().ToLower())
         {
             case "g":
             case "grams":
