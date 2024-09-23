@@ -19,6 +19,6 @@ public class RecipesService : IRecipesService
 
     public IEnumerable<string> ListAllRecipes()
     {
-        return _recipeContext.Recipes.Select(r => r.Name);
+        return _recipeContext.Recipes.Select(r => r.Name).OrderBy(s => s);
     }
 }
