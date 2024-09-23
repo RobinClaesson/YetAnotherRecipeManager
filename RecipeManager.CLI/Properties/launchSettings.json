@@ -1,6 +1,10 @@
 {
   "profiles": {
-    "RecipeManager.CLI": {
+    "List Recipes": {
+      "commandName": "Project",
+      "commandLineArgs": "-p 5000 -h localhost"
+    },
+    "Add Recipe": {
       "commandName": "Project",
       "commandLineArgs": "-p 5000 -h localhost"
     }

@@ -21,13 +21,7 @@ async Task ListRecipes(ListRecipesOptions options)
 {
     Console.WriteLine($"Fetching recipes from {options.Host}:{options.Port}");
 
-    using var client = new HttpClient();
-    client.BaseAddress = new UriBuilder
-    {
-        Scheme = options.UseHttps ? "https" : "http",
-        Host = options.Host,
-        Port = options.Port
-    }.Uri;
+    using var client = HttpClientFactory.GetClient(options);
 
     var result = await client.GetFromJsonAsync<List<string>>("/api/Recipe/RecipeNames");
 
