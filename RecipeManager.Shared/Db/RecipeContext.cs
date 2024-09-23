@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RecipeManager.Shared.Models;
 
-namespace RecipeManager.Shared;
+namespace RecipeManager.Shared.Db;
 
 public class RecipeContext : DbContext
 {
@@ -11,7 +11,7 @@ public class RecipeContext : DbContext
 
     public RecipeContext()
     {
-        
+
     }
 
     public RecipeContext(string dbPath)
