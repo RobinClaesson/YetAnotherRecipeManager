@@ -7,7 +7,7 @@ public class RecipeContext : DbContext
 {
     public DbSet<Recipe> Recipes { get; set; }
 
-    public string DbPath { get; private set; } = "RecipeManager.sqlite";
+    public string DbPath { get; private set; } = Defaults.DbPath;
 
     public RecipeContext()
     {
