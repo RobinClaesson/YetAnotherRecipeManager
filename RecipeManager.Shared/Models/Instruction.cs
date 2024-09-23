@@ -8,6 +8,7 @@ public record Instruction
     public Guid InstructionId { get; set; }
 
     public string Name { get; set; } = string.Empty;
+    public int Order { get; set; } = 0;
     public string Description { get; set; } = string.Empty;
     
     //Parent Recipe
