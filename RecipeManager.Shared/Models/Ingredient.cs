@@ -14,4 +14,9 @@ public record Ingredient
     //Parent Recipe
     public Guid RecipeId { get; set; }
     public Recipe Recipe { get; set; } = null!;
+
+    public override string ToString()
+    {
+        return $"{Name} {Quantity} {Unit}";
+    }
 }
