@@ -162,6 +162,8 @@ async Task GetRecipes(GetRecipesOptions options)
 
     if (options.Id is not null)
     {
+        Console.WriteLine($"Fetching recipe from {options.Host}:{options.Port}");
+
         var recipe = await client.GetFromJsonAsync<Recipe>($"/api/Recipe/GetRecipe?recipeId={options.Id}");
         Console.WriteLine(recipe);
         return;
@@ -178,6 +180,8 @@ async Task GetRecipes(GetRecipesOptions options)
         Tags = options.Tags?.ToList() ?? new List<string>(),
         Ingredients = options.Ingredients?.ToList() ?? new List<string>()
     };
+
+    Console.WriteLine($"Fetching recipes from {options.Host}:{options.Port}");
 
     var recipes = await client.GetFromJsonAsync<List<Recipe>>($"/api/Recipe/GetRecipesFull?{filter.ToQueryString()}");
     if (recipes == null || recipes.Count == 0)
