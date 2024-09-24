@@ -30,6 +30,7 @@ void BuildAndRun(RunOptions options)
         opt.UseSqlite($"Data Source={Settings.DbPath}");
     });
     builder.Services.AddScoped<IRecipesService, RecipesService>();
+    builder.Services.AddScoped<IIngredientsService, IngredientService>();
 
 
     // Add the ports from the command line options
