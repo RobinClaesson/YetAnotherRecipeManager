@@ -24,9 +24,9 @@ public class RecipeController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<Recipe> AddRecipe([FromBody] RecipeContract recipe)
+    public ActionResult<Guid> AddRecipe([FromBody] RecipeContract recipe)
     {
-        var posted = _recipesService.AddRecipe(recipe);
-        return Ok(posted);
+        var postedId = _recipesService.AddRecipe(recipe);
+        return Ok(postedId);
     }
 }

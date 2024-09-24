@@ -143,15 +143,9 @@ async Task AddRecipe(AddRecipeOptions options)
 
     var response = await client.PostAsJsonAsync("/api/Recipe/AddRecipe", recipe);
 
-    if(response.IsSuccessStatusCode)
+    if (response.IsSuccessStatusCode)
     {
-        var posted = await response.Content.ReadFromJsonAsync<Recipe>();
-        if(posted == null)
-        {
-            Console.WriteLine("Failed to save recipe.");
-            return;
-        }
-        Console.WriteLine($"Recipe ${posted.Name} saved!");
+        Console.WriteLine($"Recipe ${recipe.Name} saved!");
     }
     else
     {
