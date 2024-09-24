@@ -57,10 +57,10 @@ public class RecipesService : IRecipesService
 
     public Recipe? GetRecipe(Guid recipeId)
     {
-        if(_recipeContext.Recipes.Find(recipeId) is Recipe recipe)
-            return recipe;
-
-        return null;
+        return _recipeContext.Recipes
+                            .Include(r => r.Ingredients)
+                            .Include(r => r.Instructions)
+                            .FirstOrDefault(r => r.RecipeId == recipeId);
     }
 
     public Guid AddRecipe(RecipeContract recipeContract)
