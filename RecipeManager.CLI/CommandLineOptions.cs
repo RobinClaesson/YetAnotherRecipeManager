@@ -26,3 +26,16 @@ public class AddRecipeOptions : BaseOptions
 {
 
 }
+
+[Verb("get-recipes", HelpText = "Get recipe(s)")]
+public class GetRecipesOptions : BaseOptions
+{
+    [Option("id", HelpText = "Recipe ID")]
+    public Guid? Id { get; set; }
+
+    [Option('t', "tags", HelpText = "Filter by tags (ignored if --id is set)")]
+    public IEnumerable<string>? Tags { get; set; }
+
+    [Option('i', "ingredients", HelpText = "Filter by ingredients (ignored if --id is set)")]
+    public IEnumerable<string>? Ingredients { get; set; }
+}

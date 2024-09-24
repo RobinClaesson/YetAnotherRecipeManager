@@ -7,6 +7,18 @@
     "Add Recipe": {
       "commandName": "Project",
       "commandLineArgs": "add-recipe -p 5000 -h localhost"
+    },
+    "Get Recipe by Id": {
+      "commandName": "Project",
+      "commandLineArgs": "get-recipes -id \"925D26C4-F226-46BF-B9B1-EC89DCFD4724\" -h localhost -p 5000"
+    },
+    "Get Recipe by tags": {
+      "commandName": "Project",
+      "commandLineArgs": "get-recipes -h localhost -p 5000 -t \"Frukost\", \"Enkel\""
+    },
+    "Get Recipe by ingredient": {
+      "commandName": "Project",
+      "commandLineArgs": "get-recipes -h localhost -p 5000 - \"Mjölk\""
     }
   }
 }

@@ -4,10 +4,11 @@ using RecipeManager.Shared.Contracts;
 using RecipeManager.Shared.Models;
 using System.Net.Http.Json;
 
-await Parser.Default.ParseArguments<ListRecipesOptions, AddRecipeOptions>(args)
+await Parser.Default.ParseArguments<ListRecipesOptions, AddRecipeOptions, GetRecipesOptions>(args)
     .MapResult(
         (ListRecipesOptions options) => ListRecipes(options),
         (AddRecipeOptions options) => AddRecipe(options),
+        (GetRecipesOptions options) => GetRecipes(options),
         HandleParseError
     );
 
@@ -151,5 +152,43 @@ async Task AddRecipe(AddRecipeOptions options)
     {
         Console.WriteLine("Failed to save recipe.");
         Console.WriteLine(response.ReasonPhrase);
+    }
+}
+
+async Task GetRecipes(GetRecipesOptions options)
+{
+    using var client = HttpClientFactory.GetClient(options);
+
+    if (options.Id is not null)
+    {
+        var recipe = await client.GetFromJsonAsync<Recipe>($"/api/Recipe/GetRecipe?recipeId={options.Id}");
+        Console.WriteLine(recipe);
+        return;
+    }
+
+    if (options.Tags is null && options.Ingredients is null)
+    {
+        Console.WriteLine("No filter provided, please provide id, tag(s) or ingredient(s).");
+        return;
+    }
+
+    var filter = new RecipeFilterContract
+    {
+        Tags = options.Tags?.ToList() ?? new List<string>(),
+        Ingredients = options.Ingredients?.ToList() ?? new List<string>()
+    };
+
+    var recipes = await client.GetFromJsonAsync<List<Recipe>>($"/api/Recipe/GetRecipesFull?{filter.ToQueryString()}");
+    if (recipes == null || recipes.Count == 0)
+    {
+        Console.WriteLine("No recipes found.");
+        return;
+    }
+
+    Console.WriteLine("Recipes:");
+    foreach (var recipe in recipes)
+    {
+        Console.WriteLine("-------------------------------------------------");
+        Console.WriteLine(recipe);
     }
 }
