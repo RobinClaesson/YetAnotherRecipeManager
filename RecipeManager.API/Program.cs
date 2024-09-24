@@ -36,7 +36,7 @@ void BuildAndRun(RunOptions options)
     });
     builder.Services.AddScoped<IRecipesService, RecipesService>();
     builder.Services.AddScoped<IIngredientsService, IngredientService>();
-
+    builder.Services.AddScoped<ITagService, TagService>();
 
     // Add the ports from the command line options
     builder.WebHost.UseUrls(options.GetHostUrls());
