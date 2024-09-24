@@ -41,6 +41,17 @@ void BuildAndRun(RunOptions options)
     // Add the ports from the command line options
     builder.WebHost.UseUrls(options.GetHostUrls());
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(
+            policy =>
+            {
+                policy.AllowAnyOrigin();  //set the allowed origin  
+                policy.AllowAnyHeader();  //set the allowed header
+                policy.AllowAnyMethod();  //set the allowed method
+            });
+    });
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -56,7 +67,7 @@ void BuildAndRun(RunOptions options)
 
     app.UseAuthorization();
     app.MapControllers();
-
+    app.UseCors();
     app.Run();
 }
 
