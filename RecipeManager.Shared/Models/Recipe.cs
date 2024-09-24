@@ -36,4 +36,18 @@ public record Recipe
 
         return sb.ToString();
     }
+
+    /// <summary>
+    /// Fill in missing references to the parent recipe in the child ingredients and instructions.
+    /// </summary>
+    public void FillMissingParentReferencesInChildren()
+    {
+        foreach (var ingredient in Ingredients)
+            if (ingredient.Recipe == null)
+                ingredient.Recipe = this;
+
+        foreach (var instruction in Instructions)
+            if (instruction.Recipe == null)
+                instruction.Recipe = this;
+    }
 }

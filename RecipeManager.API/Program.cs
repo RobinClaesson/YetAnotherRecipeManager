@@ -4,6 +4,7 @@ using RecipeManager.API;
 using RecipeManager.API.CommandLine;
 using RecipeManager.API.Services;
 using RecipeManager.Shared.Db;
+using System.Text.Json.Serialization;
 
 Parser.Default.ParseArguments<RunOptions>(args)
     .WithParsed(BuildAndRun)
@@ -22,7 +23,11 @@ void BuildAndRun(RunOptions options)
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+                    .AddJsonOptions(opt =>
+                    {
+                        opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    });
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddDbContext<RecipeContext>(opt =>

@@ -23,6 +23,27 @@ public class RecipeController : ControllerBase
         return Ok(_recipesService.ListAllRecipes());
     }
 
+    [HttpGet]
+    public ActionResult<IEnumerable<Recipe>> GetRecipesInfo([FromQuery] RecipeFilterContract filter)
+    {
+        return Ok(_recipesService.GetRecipesInfo(filter));
+    }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<Recipe>> GetRecipesFull([FromQuery] RecipeFilterContract filter)
+    {
+        return Ok(_recipesService.GetRecipesFull(filter));
+    }
+
+    [HttpGet]
+    public ActionResult<Recipe> GetRecipe(Guid recipeId)
+    {
+        var recipe = _recipesService.GetRecipe(recipeId);
+        if (recipe is null)
+            return NotFound();
+        return Ok(recipe);
+    }
+
     [HttpPost]
     public ActionResult<Guid> AddRecipe([FromBody] RecipeContract recipe)
     {
