@@ -34,10 +34,10 @@ public class RecipesService : IRecipesService
         var recipes = _recipeContext.Recipes.AsQueryable();
 
         if (filter.Tags.Any())
-            recipes = recipes.Where(r => r.Tags.Any(t => filter.Tags.Contains(t)));
+            recipes = recipes.Where(r => filter.Tags.All(ft => r.Tags.Contains(ft)));
 
         if(filter.Ingredients.Any())
-            recipes = recipes.Where(r => r.Ingredients.Any(i => filter.Ingredients.Contains(i.Name)));
+            recipes = recipes.Where(r => filter.Ingredients.All(fi => r.Ingredients.Any(ri => ri.Name == fi)));
 
         return recipes;
     }
@@ -47,10 +47,10 @@ public class RecipesService : IRecipesService
         var recipes = _recipeContext.Recipes.AsQueryable();
 
         if (filter.Tags.Any())
-            recipes = recipes.Where(r => r.Tags.Any(t => filter.Tags.Contains(t)));
+            recipes = recipes.Where(r => filter.Tags.All(ft => r.Tags.Contains(ft)));
 
         if (filter.Ingredients.Any())
-            recipes = recipes.Where(r => r.Ingredients.Any(i => filter.Ingredients.Contains(i.Name)));
+            recipes = recipes.Where(r => filter.Ingredients.All(fi => r.Ingredients.Any(ri => ri.Name == fi)));
 
         return recipes.Include(r => r.Ingredients).Include(r => r.Instructions);
     }
