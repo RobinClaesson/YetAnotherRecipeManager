@@ -1,0 +1,24 @@
+﻿@using RecipeManager.Web.Store.CommonStore
+@inherits LayoutComponentBase
+@inject IDispatcher Dispatcher
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        My Application
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Dispatcher.Dispatch(new AppLoadedAction());
+    }
+}
