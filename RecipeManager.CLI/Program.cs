@@ -4,11 +4,12 @@ using RecipeManager.Shared.Contracts;
 using RecipeManager.Shared.Models;
 using System.Net.Http.Json;
 
-await Parser.Default.ParseArguments<ListRecipesOptions, AddRecipeOptions, GetRecipesOptions>(args)
+await Parser.Default.ParseArguments<ListRecipesOptions, AddRecipeOptions, GetRecipesOptions, ListTagsOptions>(args)
     .MapResult(
         (ListRecipesOptions options) => ListRecipes(options),
         (AddRecipeOptions options) => AddRecipe(options),
         (GetRecipesOptions options) => GetRecipes(options),
+        (ListTagsOptions options) => ListTags(options),
         HandleParseError
     );
 
@@ -190,5 +191,32 @@ async Task GetRecipes(GetRecipesOptions options)
     {
         Console.WriteLine("-------------------------------------------------");
         Console.WriteLine(recipe);
+    }
+}
+
+async Task ListTags(ListTagsOptions options)
+{
+    Console.WriteLine($"Fetching tags from {options.Host}:{options.Port}");
+
+    using var client = HttpClientFactory.GetClient(options);
+
+    var tags = await client.GetFromJsonAsync<List<string>>("/api/Tag/AllTags");
+
+    if (tags == null)
+    {
+        Console.WriteLine("Could not fetch recipes...");
+        return;
+    }
+
+    if (tags.Count == 0)
+    {
+        Console.WriteLine("No recipes found");
+        return;
+    }
+
+    Console.WriteLine("Tags:");
+    foreach (var tag in tags)
+    {
+        Console.WriteLine(tag);
     }
 }

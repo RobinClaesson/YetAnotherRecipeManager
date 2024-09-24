@@ -39,3 +39,9 @@ public class GetRecipesOptions : BaseOptions
     [Option('i', "ingredients", HelpText = "Filter by ingredients (ignored if --id is set)")]
     public IEnumerable<string>? Ingredients { get; set; }
 }
+
+[Verb("list-tags", HelpText = "List tags")]
+public class ListTagsOptions : BaseOptions
+{
+
+}

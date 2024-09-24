@@ -19,6 +19,10 @@
     "Get Recipe by ingredient": {
       "commandName": "Project",
       "commandLineArgs": "get-recipes -h localhost -p 5000 - \"Mjölk\""
+    },
+    "List Tags": {
+      "commandName": "Project",
+      "commandLineArgs": "list-tags -p 5000 -h localhost"
     }
   }
 }
