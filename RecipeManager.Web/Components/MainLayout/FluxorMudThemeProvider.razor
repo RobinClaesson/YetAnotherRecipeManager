@@ -1,0 +1,6 @@
+﻿@using RecipeManager.Web.Store.ViewStore
+@inherits FluxorComponent
+@inject IState<ViewState> ViewState
+
+<MudThemeProvider IsDarkMode="@ViewState.Value.DarkMode" />
+   
