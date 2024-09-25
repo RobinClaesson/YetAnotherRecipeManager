@@ -1,8 +1,8 @@
 ﻿using Blazored.LocalStorage;
 using Fluxor;
 using RecipeManager.Shared.Models;
+using RecipeManager.Web.Models.RecipeStore;
 using RecipeManager.Web.Store.CommonStore;
-using RecipeManager.Web.Store.RecipeStore.Models;
 using System.Net.Http.Json;
 using System.Text.Json;
 

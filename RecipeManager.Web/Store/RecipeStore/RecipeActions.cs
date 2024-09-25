@@ -1,5 +1,5 @@
 ﻿using RecipeManager.Shared.Models;
-using RecipeManager.Web.Store.RecipeStore.Models;
+using RecipeManager.Web.Models.RecipeStore;
 
 namespace RecipeManager.Web.Store.RecipeStore;
 

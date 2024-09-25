@@ -1,6 +1,6 @@
 ﻿using RecipeManager.Shared.Models;
 
-namespace RecipeManager.Web.Store.RecipeStore.Models;
+namespace RecipeManager.Web.Models.RecipeStore;
 
 public record RecipieCollection
 {
