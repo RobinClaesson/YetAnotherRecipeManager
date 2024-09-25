@@ -1,0 +1,45 @@
+﻿@inherits FluxorComponent
+@page "/recipes"
+@using RecipeManager.Shared.Models
+@using RecipeManager.Web.Models.RecipeView
+
+<PageTitle>YARM - Recipes</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudDataGrid T="RecipeListing" Items="@RecipeListings" RowClick="RecipeRowClicked"
+                 Style="margin-top: 1.5rem;" RowsPerPage="100">
+        <ToolBarContent>
+            <MudText Typo="Typo.h4">Recipes</MudText>
+            <MudSpacer />
+
+        </ToolBarContent>
+        <Columns>
+            <HierarchyColumn />
+            <TemplateColumn Title="Name">
+                <CellTemplate>
+                    <MudLink>
+                        <MudText Typo="Typo.h6">@context.Item.Name</MudText>
+                    </MudLink>
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => ReadableTags(x)" Title="Tags" />
+            <PropertyColumn Property="x => x.SourceName" Title="Source" />
+        </Columns>
+        <ChildRowContent>
+            <MudCard>
+                <MudCardContent>
+                    <MudText>@context.Item.Description</MudText>
+
+                    <MudText><strong>Ingredients</strong></MudText>
+                    @foreach (var ingredient in context.Item.Ingredients)
+                    {
+                        <MudChip>@ingredient.Name</MudChip>
+                    }
+                </MudCardContent>
+            </MudCard>
+        </ChildRowContent>
+        <PagerContent>
+            <MudDataGridPager />
+        </PagerContent>
+    </MudDataGrid>
+</MudContainer>

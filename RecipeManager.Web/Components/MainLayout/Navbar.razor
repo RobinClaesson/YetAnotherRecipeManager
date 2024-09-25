@@ -1,0 +1,19 @@
+﻿@inherits FluxorComponent
+
+<MudAppBar Color="Color.Primary" Fixed="true">
+
+    <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Inherit" Size="Size.Large" />
+    <strong>Yet Another Recipe Manager</strong>
+
+    <MudSpacer />
+    <MudButton Href="/" Color="Color.Inherit" Size="Size.Large">Home</MudButton>
+    <MudButton Href="/recipes" Color="Color.Inherit">Recipes</MudButton>
+    <MudSpacer />
+
+    <MudTooltip Text="Source">
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub"
+                       Href="https://github.com/RobinClaesson/YetAnotherRecipeManager"
+                       Target="blank"
+                       Color="Color.Inherit" />
+    </MudTooltip>
+</MudAppBar>

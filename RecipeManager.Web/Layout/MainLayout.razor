@@ -1,4 +1,6 @@
-﻿@using RecipeManager.Web.Store.CommonStore
+﻿@using RecipeManager.Web.Components.MainLayout;
+@using RecipeManager.Web.Store.CommonStore
+
 @inherits LayoutComponentBase
 @inject IDispatcher Dispatcher
 
@@ -8,9 +10,7 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
-        My Application
-    </MudAppBar>
+    <Navbar />
     <MudMainContent>
         @Body
     </MudMainContent>
