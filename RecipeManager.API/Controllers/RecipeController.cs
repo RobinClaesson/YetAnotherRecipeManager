@@ -44,6 +44,21 @@ public class RecipeController : ControllerBase
         return Ok(recipe);
     }
 
+    [HttpGet]
+    public ActionResult<RecipeContract> ExportRecipe(Guid recipeId)
+    {
+        var recipe = _recipesService.ExportRecipe(recipeId);
+        if (recipe is null)
+            return NotFound();
+        return Ok(recipe);
+    }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<RecipeContract>> ExportRecipes([FromQuery] RecipeFilterContract filter)
+    {
+        return Ok(_recipesService.ExportRecipes(filter));
+    }
+
     [HttpPost]
     public ActionResult<Guid> AddRecipe([FromBody] RecipeContract recipe)
     {

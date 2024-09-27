@@ -10,7 +10,9 @@ public interface IRecipesService
     public IEnumerable<string> ListAllRecipes();
     public IEnumerable<Recipe> GetRecipesInfo(RecipeFilterContract filter);
     public IEnumerable<Recipe> GetRecipesFull(RecipeFilterContract filter);
+    public IEnumerable<RecipeContract> ExportRecipes(RecipeFilterContract filter);
     public Recipe? GetRecipe(Guid recipeId);
+    public RecipeContract? ExportRecipe(Guid recipeId);
     public Guid AddRecipe(RecipeContract recipe);
 }
 
@@ -61,6 +63,18 @@ public class RecipesService : IRecipesService
                             .Include(r => r.Ingredients)
                             .Include(r => r.Instructions)
                             .FirstOrDefault(r => r.RecipeId == recipeId);
+    }
+
+    public RecipeContract? ExportRecipe(Guid recipeId)
+    {
+        var recipe = GetRecipe(recipeId);
+        return recipe is null ? null : RecipeContract.FromModel(recipe);
+    }
+
+    public IEnumerable<RecipeContract> ExportRecipes(RecipeFilterContract filter)
+    {
+        var recipes = GetRecipesFull(filter);
+        return recipes.Select(RecipeContract.FromModel);
     }
 
     public Guid AddRecipe(RecipeContract recipeContract)
