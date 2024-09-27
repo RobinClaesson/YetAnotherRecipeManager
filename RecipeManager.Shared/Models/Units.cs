@@ -14,6 +14,7 @@ public enum Units
     Tablespoon,
     Cup,
     Piece,
+    ByTaste
 }
 
 public static class UnitsParser
