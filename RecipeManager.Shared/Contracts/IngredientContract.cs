@@ -22,4 +22,14 @@ public record IngredientContract
             Unit = Unit
         };
     }
+
+    public static IngredientContract FromModel(Ingredient ingredient)
+    {
+        return new IngredientContract
+        {
+            Name = ingredient.Name,
+            Quantity = ingredient.Quantity,
+            Unit = ingredient.Unit
+        };
+    }
 }

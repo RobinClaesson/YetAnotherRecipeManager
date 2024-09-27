@@ -22,4 +22,14 @@ public record InstructionContract
             Description = Description
         };
     }
+
+    static public InstructionContract FromModel(Instruction instruction)
+    {
+        return new InstructionContract
+        {
+            Name = instruction.Name,
+            Order = instruction.Order,
+            Description = instruction.Description
+        };
+    }
 }

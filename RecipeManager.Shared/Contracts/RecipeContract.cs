@@ -47,4 +47,17 @@ public class RecipeContract
             Instructions = Instructions.Select(i => i.ToModel()).ToList()
         };
     }
+
+    public static RecipeContract FromModel(Recipe recipeModel)
+    {
+        return new RecipeContract
+        {
+            Name = recipeModel.Name,
+            Description = recipeModel.Description,
+            Tags = recipeModel.Tags,
+            Servings = recipeModel.Servings,
+            Ingredients = recipeModel.Ingredients.Select(i => IngredientContract.FromModel(i)).ToList(),
+            Instructions = recipeModel.Instructions.Select(i => InstructionContract.FromModel(i)).ToList()
+        };
+    }
 }
