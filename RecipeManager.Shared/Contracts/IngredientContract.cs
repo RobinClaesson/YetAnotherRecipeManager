@@ -5,7 +5,7 @@ namespace RecipeManager.Shared.Contracts;
 public record IngredientContract
 {
     public string Name { get; set; } = string.Empty;
-    public double Quantity { get; set; } = 0;
+    public double? Quantity { get; set; } = 0;
     public Units Unit { get; set; } = Units.None;
     
     public override string ToString()

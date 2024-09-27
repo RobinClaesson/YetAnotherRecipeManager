@@ -8,7 +8,7 @@ public record Ingredient
     public Guid IngredientId { get; set; }
 
     public string Name { get; set; } = string.Empty;
-    public double Quantity { get; set; } = 0;
+    public double? Quantity { get; set; } = 0;
     public Units Unit { get; set; } = Units.None;
 
     //Parent Recipe
