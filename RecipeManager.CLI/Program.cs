@@ -76,7 +76,7 @@ async Task AddRecipe(AddRecipeOptions options)
         Console.WriteLine("Invalid input, please enter a number");
     recipe.Servings = servings;
 
-    Console.WriteLine("Enter Recipe Ingredients (ingredient quantity unit), end with empty line: ");
+    Console.WriteLine("Enter Recipe Ingredients ('ingredient quantity unit', or 'ingredient by taste'), end with empty line: ");
     string? ingredient = null;
     while (!string.IsNullOrEmpty(ingredient = Console.ReadLine()))
     {
@@ -89,10 +89,22 @@ async Task AddRecipe(AddRecipeOptions options)
 
         if (!double.TryParse(parts[1], out double quantity))
         {
+            if (parts[1].ToLower() == "by" && parts[2].ToLower() == "taste")
+            {
+                recipe.Ingredients.Add(new IngredientContract
+                {
+                    Name = parts[0].Trim(),
+                    Unit = Units.ByTaste,
+                    Quantity = quantity
+                });
+
+                continue;
+            }
+
             Console.WriteLine("Invalid quantity.");
             continue;
         }
-
+        
         if (!UnitsParser.TryParse(parts[2], out Units unit))
         {
             Console.WriteLine("Unknwn unit.");
@@ -147,7 +159,7 @@ async Task AddRecipe(AddRecipeOptions options)
 
     if (response.IsSuccessStatusCode)
     {
-        Console.WriteLine($"Recipe ${recipe.Name} saved!");
+        Console.WriteLine($"Recipe {recipe.Name} saved!");
     }
     else
     {
