@@ -14,6 +14,7 @@ public interface IRecipesService
     public Recipe? GetRecipe(Guid recipeId);
     public RecipeContract? ExportRecipe(Guid recipeId);
     public Guid AddRecipe(RecipeContract recipe);
+    public IEnumerable<Guid> AddRecipes(IEnumerable<RecipeContract> recipes);
 }
 
 public class RecipesService : IRecipesService
@@ -83,5 +84,20 @@ public class RecipesService : IRecipesService
         var posted = _recipeContext.Recipes.Add(recipe);
         _recipeContext.SaveChanges();
         return posted.Entity.RecipeId;
+    }
+
+    public IEnumerable<Guid> AddRecipes(IEnumerable<RecipeContract> recipes)
+    {
+        var recipeModels = recipes.Select(r => r.ToModel());
+        var guids = new List<Guid>();
+
+        foreach (var recipe in recipeModels)
+        {
+            var posted = _recipeContext.Recipes.Add(recipe);
+            guids.Add(posted.Entity.RecipeId);
+        }
+
+        _recipeContext.SaveChanges();
+        return guids;
     }
 }

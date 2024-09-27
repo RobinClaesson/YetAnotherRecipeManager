@@ -65,4 +65,11 @@ public class RecipeController : ControllerBase
         var postedId = _recipesService.AddRecipe(recipe);
         return Ok(postedId);
     }
+
+    [HttpPost]
+    public ActionResult<IEnumerable<Guid>> AddRecipes([FromBody] IEnumerable<RecipeContract> recipes)
+    {
+        var postedIds = _recipesService.AddRecipes(recipes);
+        return Ok(postedIds);
+    }
 }
