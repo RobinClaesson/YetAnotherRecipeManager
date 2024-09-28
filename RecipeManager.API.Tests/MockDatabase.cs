@@ -86,6 +86,14 @@ internal static class MockDatabase
 			Quantity = 2,
 			Unit = Units.Piece,
 			RecipeId = MockRecipes[1].RecipeId
+		},
+		new()
+		{
+			IngredientId = Guid.NewGuid(),
+			Name = "Milk",
+			Quantity = 1,
+			Unit = Units.Cup,
+			RecipeId = MockRecipes[1].RecipeId
 		}
 	};
 }
