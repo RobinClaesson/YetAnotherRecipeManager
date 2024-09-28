@@ -96,4 +96,13 @@ public class RecipeController : ControllerBase
             return Ok(deletedIds);
         return NotFound();
     }
+
+    [HttpPatch]
+    public ActionResult<Guid> UpdateRecipe([FromBody] UpdateRecipeContract recipe)
+    {
+        var updatedRecipe = _recipesService.UpdateRecipe(recipe);
+        if (updatedRecipe is null)
+            return NotFound();
+        return Ok(updatedRecipe);
+    }
 }
