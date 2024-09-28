@@ -9,10 +9,9 @@ internal static class MockDatabase
 	public static RecipeContext DatabaseSetup()
 	{
 		var options = new DbContextOptionsBuilder<RecipeContext>();
-		options.UseSqlite("Data Source=MockDatabase;Mode=Memory;Cache=Shared");
+		options.UseSqlite("Data Source=MockDatabase.db");
 
 		var context = new RecipeContext(options.Options);
-		context.Database.OpenConnection();
 		context.Database.EnsureCreated();
 
 		context.Recipes.AddRange(MockRecipes);
@@ -23,7 +22,6 @@ internal static class MockDatabase
 
 	public static void DatabaseTeardown(RecipeContext context)
 	{
-		context.Database.CloseConnection();
 		context.Database.EnsureDeleted();
 	}
 
