@@ -16,6 +16,8 @@ public interface IRecipesService
     public RecipeContract? ExportRecipe(Guid recipeId);
     public Guid AddRecipe(RecipeContract recipe);
     public IEnumerable<Guid> AddRecipes(IEnumerable<RecipeContract> recipes);
+    public Guid? DeleteRecipe(Guid recipeId);
+    public IEnumerable<Guid> DeleteRecipes(IEnumerable<Guid> recipeIds);
 }
 
 public class RecipesService : IRecipesService
@@ -106,4 +108,24 @@ public class RecipesService : IRecipesService
         _recipeContext.SaveChanges();
         return guids;
     }
+
+    public Guid? DeleteRecipe(Guid recipeId)
+    {
+        if (!_recipeContext.Recipes.Any(r => r.RecipeId == recipeId))
+            return null;
+
+        var recipe = _recipeContext.Recipes.Find(recipeId);
+        _recipeContext.Recipes.Remove(recipe!);
+        _recipeContext.SaveChanges();
+        return recipeId;
+    }
+
+    public IEnumerable<Guid> DeleteRecipes(IEnumerable<Guid> recipeIds)
+    {
+        var recipes = _recipeContext.Recipes.Where(r => recipeIds.Contains(r.RecipeId)).ToList();
+        _recipeContext.Recipes.RemoveRange(recipes);
+        _recipeContext.SaveChanges();
+        return recipes.Select(r => r.RecipeId);
+    }
+
 }

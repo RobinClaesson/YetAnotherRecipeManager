@@ -78,4 +78,22 @@ public class RecipeController : ControllerBase
         var postedIds = _recipesService.AddRecipes(recipes);
         return Ok(postedIds);
     }
+
+    [HttpDelete]
+    public ActionResult<Guid> DeleteRecipe(Guid recipeId)
+    {
+        var deletedId = _recipesService.DeleteRecipe(recipeId);
+        if (deletedId is not null)
+            return Ok(deletedId);
+        return NotFound();
+    }
+
+    [HttpDelete]
+    public ActionResult<IEnumerable<Guid>> DeleteRecipes([FromBody] IEnumerable<Guid> recipeIds)
+    {
+        var deletedIds = _recipesService.DeleteRecipes(recipeIds);
+        if (deletedIds.Any())
+            return Ok(deletedIds);
+        return NotFound();
+    }
 }
