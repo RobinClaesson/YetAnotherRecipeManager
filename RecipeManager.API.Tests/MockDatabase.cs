@@ -16,6 +16,7 @@ internal static class MockDatabase
 
 		context.Recipes.AddRange(MockRecipes);
 		context.Ingredients.AddRange(MockIngredients);
+		context.Instructions.AddRange(MockInstructions);
 		context.SaveChanges();
 
 		return new RecipeContext(options.Options);
@@ -95,5 +96,57 @@ internal static class MockDatabase
 			Unit = Units.Cup,
 			RecipeId = MockRecipes[1].RecipeId
 		}
+	};
+
+	public static List<Instruction> MockInstructions = new()
+	{
+		new()
+		{
+			InstructionId = Guid.NewGuid(),
+			Name = "Cereal",
+			Order = 1,
+			Description = "Pour cereal into bowl",
+			RecipeId = MockRecipes[0].RecipeId
+		},
+		new()
+		{
+            InstructionId = Guid.NewGuid(),
+            Name = "Milk",
+            Order = 2,
+            Description = "Pour milk over the cereal",
+            RecipeId = MockRecipes[0].RecipeId
+        },
+		new()
+		{
+            InstructionId = Guid.NewGuid(),
+            Name = "Peanut Butter",
+            Order = 1,
+            Description = "Spread peanut butter on one slice of bread",
+            RecipeId = MockRecipes[1].RecipeId
+        },
+		new()
+		{
+            InstructionId = Guid.NewGuid(),
+            Name = "Jelly",
+            Order = 2,
+            Description = "Spread jelly on the other slice of bread",
+            RecipeId = MockRecipes[1].RecipeId
+        },
+		new()
+		{
+            InstructionId = Guid.NewGuid(),
+            Name = "Combine",
+            Order = 3,
+            Description = "Combine the two slices of bread",
+            RecipeId = MockRecipes[1].RecipeId
+        },
+		new()
+		{
+            InstructionId = Guid.NewGuid(),
+            Name = "Milk",
+            Order = 4,
+            Description = "Pour a glass of milk to enjoy with the sandwitch",
+            RecipeId = MockRecipes[1].RecipeId
+        }
 	};
 }
