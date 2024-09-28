@@ -15,6 +15,7 @@ internal static class MockDatabase
 		context.Database.EnsureCreated();
 
 		context.Recipes.AddRange(MockRecipes);
+		context.Ingredients.AddRange(MockIngredients);
 		context.SaveChanges();
 
 		return new RecipeContext(options.Options);
@@ -28,7 +29,7 @@ internal static class MockDatabase
 	public static readonly List<Recipe> MockRecipes = new() { 
 		new()
 		{
-			RecipeId = new("d42f78fd-84b4-4a0f-a6f5-28576ea386d2"),
+			RecipeId = Guid.NewGuid(),
 			Name = "Milk and Cereal",
 			Description = "A simple breakfast",
 			Tags = new() { "breakfast", "simple" },
@@ -36,11 +37,55 @@ internal static class MockDatabase
 		},
 		new()
 		{
-            RecipeId = new("df5c4f86-ca8c-4077-a397-76aa1edc2a91"),
+            RecipeId = Guid.NewGuid(),
             Name = "Peanut Butter and Jelly Sandwich",
             Description = "A simple lunch",
             Tags = new() { "lunch", "simple" },
             Servings = 1
         }
+	};
+
+	public static readonly List<Ingredient> MockIngredients = new()
+	{
+		new()
+		{
+			IngredientId = Guid.NewGuid(),
+			Name = "Milk",
+			Quantity = 2,
+			Unit = Units.Cup,
+			RecipeId = MockRecipes[0].RecipeId
+		},
+		new()
+		{
+            IngredientId = Guid.NewGuid(),
+            Name = "Cereal",
+            Quantity = 150,
+            Unit = Units.Grams,
+            RecipeId = MockRecipes[0].RecipeId
+        },
+		new()
+		{
+            IngredientId = Guid.NewGuid(),
+            Name = "Peanut Butter",
+            Quantity = 2,
+            Unit = Units.Tablespoon,
+            RecipeId = MockRecipes[1].RecipeId
+        },
+		new()
+		{
+            IngredientId = Guid.NewGuid(),
+            Name = "Jelly",
+            Quantity = 1,
+            Unit = Units.Tablespoon,
+            RecipeId = MockRecipes[1].RecipeId
+        },
+		new()
+		{
+			IngredientId = Guid.NewGuid(),
+			Name = "Breadslices",
+			Quantity = 2,
+			Unit = Units.Piece,
+			RecipeId = MockRecipes[1].RecipeId
+		}
 	};
 }
