@@ -18,6 +18,12 @@ public class RecipeController : ControllerBase
     }
 
     [HttpGet]
+    public ActionResult<IEnumerable<Guid>> RecipeIds()
+    {
+        return Ok(_recipesService.GetRecipeIds());
+    }
+
+    [HttpGet]
     public ActionResult<IEnumerable<string>> RecipeNames()
     {
         return Ok(_recipesService.ListAllRecipes());

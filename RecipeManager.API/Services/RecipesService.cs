@@ -7,6 +7,7 @@ namespace RecipeManager.API.Services;
 
 public interface IRecipesService
 {
+    public IEnumerable<Guid> GetRecipeIds();
     public IEnumerable<string> ListAllRecipes();
     public IEnumerable<Recipe> GetRecipesInfo(RecipeFilterContract filter);
     public IEnumerable<Recipe> GetRecipesFull(RecipeFilterContract filter);
@@ -27,6 +28,11 @@ public class RecipesService : IRecipesService
         _recipeContext.Database.EnsureCreated();
     }
 
+    public IEnumerable<Guid> GetRecipeIds()
+    {
+        return _recipeContext.Recipes.Select(r => r.RecipeId);
+    }
+
     public IEnumerable<string> ListAllRecipes()
     {
         return _recipeContext.Recipes.Select(r => r.Name).OrderBy(s => s);
@@ -39,7 +45,7 @@ public class RecipesService : IRecipesService
         if (filter.Tags.Any())
             recipes = recipes.Where(r => filter.Tags.All(ft => r.Tags.Contains(ft)));
 
-        if(filter.Ingredients.Any())
+        if (filter.Ingredients.Any())
             recipes = recipes.Where(r => filter.Ingredients.All(fi => r.Ingredients.Any(ri => ri.Name == fi)));
 
         return recipes;
