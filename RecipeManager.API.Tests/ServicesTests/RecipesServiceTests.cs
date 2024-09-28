@@ -1,5 +1,7 @@
 using FluentAssertions;
+using Newtonsoft.Json.Bson;
 using RecipeManager.API.Services;
+using RecipeManager.API.Tests.Verifiers;
 using RecipeManager.Shared.Contracts;
 using RecipeManager.Shared.Db;
 using RecipeManager.Shared.Models;
@@ -140,6 +142,98 @@ namespace RecipeManager.API.Tests.ServicesTests
         {
             var filter = new RecipeFilterContract { Tags = new() { "lunch" }, Ingredients = new() { "Cereal" } };
             var result = _target.GetRecipesInfo(filter);
+
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void GetRecipesFull_EmptyFilter_ReturnsAllRecipesWithIngredientsAndInstructions()
+        {
+            var result = _target.GetRecipesFull(new());
+
+            result.Should().NotBeNullOrEmpty();
+            RecipeVerifier.VerifyRecipeIEnumerable(result, MockDatabase.MockRecipes);
+        }
+
+        [Test]
+        public void GetRecipesFull_FilterByExistingTagInOne_ReturnsOneMatchingRecipeWithIngredientsAndInstructions()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "breakfast" } };
+            var result = _target.GetRecipesFull(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(1);
+            RecipeVerifier.VerifyRecipe(result.First(), MockDatabase.MockRecipes[0]);
+        }
+
+        [Test]
+        public void GetRecipesFull_FilterByExistingTagInAll_ReturnsAllMatchingRecipesWithIngredientsAndInstructions()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "simple" } };
+            var result = _target.GetRecipesFull(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            RecipeVerifier.VerifyRecipeIEnumerable(result, MockDatabase.MockRecipes);
+        }
+
+        [Test]
+        public void GetRecipesFull_FilterByNonExistingTag_ReturnsNoRecipes()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "dinner" } };
+            var result = _target.GetRecipesFull(filter);
+
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void GetRecipesFull_FilterByExistingIngredientInOne_ReturnsOneMatchingRecipeWithIngredientsAndInstructions()
+        {
+            var filter = new RecipeFilterContract { Ingredients = new() { "Jelly" } };
+            var result = _target.GetRecipesFull(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(1);
+            RecipeVerifier.VerifyRecipe(result.First(), MockDatabase.MockRecipes[1]);
+        }
+
+        [Test]
+        public void GetRecipesFull_FilterByExistingIngredientInAll_ReturnsAllMatchingRecipesWithIngredientsAndInstructions()
+        {
+            var filter = new RecipeFilterContract { Ingredients = new() { "Milk" } };
+            var result = _target.GetRecipesFull(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            RecipeVerifier.VerifyRecipeIEnumerable(result, MockDatabase.MockRecipes);
+        }
+
+        [Test]
+        public void GetRecipesFull_FilterByNonExistingIngredient_ReturnsNoRecipes()
+        {
+            var filter = new RecipeFilterContract { Ingredients = new() { "Bread" } };
+            var result = _target.GetRecipesFull(filter);
+
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void GetRecipesFull_FilterByExistingTagAndIngredientInSameRecipe_ReturnsOneMatchingRecipeWithIngredientsAndInstructions()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "lunch" }, Ingredients = new() { "Peanut Butter" } };
+            var result = _target.GetRecipesFull(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(1);
+            RecipeVerifier.VerifyRecipe(result.First(), MockDatabase.MockRecipes[1]);
+        }
+
+        [Test]
+        public void GetRecipesFull_FilterByExistingTagAndIngredientInDifferentRecipe_ReturnsNoRecipes()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "lunch" }, Ingredients = new() { "Cereal" } };
+            var result = _target.GetRecipesFull(filter);
 
             result.Should().NotBeNull();
             result.Should().BeEmpty();
