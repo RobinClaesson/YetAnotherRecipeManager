@@ -34,5 +34,16 @@ namespace RecipeManager.API.Tests.ServicesTests
                 result.Should().Contain(recipe.RecipeId);
         }
 
+        [Test]
+        public void ListAllRecipes_ReturnsRecipeNames()
+        {
+            var result = _target.ListAllRecipes();
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            foreach (var recipe in MockDatabase.MockRecipes)
+                result.Should().Contain(recipe.Name);
+        }
+
     }
 }
