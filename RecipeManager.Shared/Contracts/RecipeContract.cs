@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RecipeManager.Shared.Contracts;
 
-public class RecipeContract
+public record RecipeContract
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
