@@ -95,7 +95,7 @@ async Task AddRecipe(AddRecipeOptions options)
                 {
                     Name = parts[0].Trim(),
                     Unit = Units.ByTaste,
-                    Quantity = quantity
+                    Quantity = -1
                 });
 
                 continue;
