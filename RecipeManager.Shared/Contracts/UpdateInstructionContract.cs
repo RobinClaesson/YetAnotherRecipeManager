@@ -8,4 +8,13 @@ public record UpdateInstructionContract
     public string? Name { get; set; }
     public int? Order { get; set; }
     public string? Description { get; set; }
+
+    public static UpdateInstructionContract FromModel(Instruction instruction)
+        => new UpdateInstructionContract
+        {
+            InstructionId = instruction.InstructionId,
+            Name = instruction.Name,
+            Order = instruction.Order,
+            Description = instruction.Description
+        };
 }

@@ -13,4 +13,16 @@ public record UpdateRecipeContract
 
     public List<UpdateIngredientContract>? Ingredients { get; set; }
     public List<UpdateInstructionContract>? Instructions { get; set; }
+
+    public static UpdateRecipeContract FromModel(Recipe recipe)
+        => new UpdateRecipeContract
+        {
+            RecipeId = recipe.RecipeId,
+            Name = recipe.Name,
+            Description = recipe.Description,
+            Tags = recipe.Tags,
+            Servings = recipe.Servings,
+            Ingredients = recipe.Ingredients.Select(UpdateIngredientContract.FromModel).ToList(),
+            Instructions = recipe.Instructions.Select(UpdateInstructionContract.FromModel).ToList()
+        };
 }

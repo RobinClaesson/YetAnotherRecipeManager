@@ -8,4 +8,13 @@ public record UpdateIngredientContract
     public string? Name { get; set; }
     public double? Quantity { get; set; }
     public Units? Unit { get; set; }
+
+    public static UpdateIngredientContract FromModel(Ingredient ingredient)
+        => new UpdateIngredientContract
+        {
+            IngredientId = ingredient.IngredientId,
+            Name = ingredient.Name,
+            Quantity = ingredient.Quantity,
+            Unit = ingredient.Unit
+        };
 }
