@@ -1,11 +1,37 @@
 ﻿using Fluxor;
 using RecipeManager.Shared.Models;
 using RecipeManager.Web.Models.RecipeStore;
+using RecipeManager.Web.Store.CommonStore;
 
 namespace RecipeManager.Web.Store.RecipeStore;
 
 public static class RecipeReducers
 {
+    private static RecipeState AppendLocalStorageCollection(RecipeState state)
+    {
+        if (!state.RecipieCollections.Any(c => c.Source.Url == Constants.LocalRecipeSourceUrl))
+        {
+            return state with
+            {
+                RecipieCollections = state.RecipieCollections.Append(
+                                                          new()
+                                                          {
+                                                              Source = new RecipeSource
+                                                              {
+                                                                  Name = Constants.LocalRecipeSourceName,
+                                                                  Url = Constants.LocalRecipeSourceUrl
+                                                              },
+                                                          }).ToList()
+            };
+        }
+
+        return state;
+    }
+
+    [ReducerMethod]
+    public static RecipeState OnAppLoadedAction(RecipeState state, AppLoadedAction action)
+        => AppendLocalStorageCollection(state);
+
     [ReducerMethod]
     public static RecipeState OnRecipesFetchedFromSourceAction(RecipeState state, RecipesFetchedFromSourceAction action)
     {
@@ -33,16 +59,7 @@ public static class RecipeReducers
     [ReducerMethod]
     public static RecipeState OnRecipesLoadedFromLocalStorageAction(RecipeState state, RecipesLoadedFromLocalStorageAction action)
     {
-        var next = state with { };
-        if (!state.RecipieCollections.Any(c => c.Source.Url == Constants.LocalRecipeSourceUrl))
-            next.RecipieCollections.Add(new RecipieCollection
-            {
-                Source = new RecipeSource
-                {
-                    Name = "Local",
-                    Url = Constants.LocalRecipeSourceUrl
-                },
-            });
+        var next = AppendLocalStorageCollection(state);
 
         var collection = next.RecipieCollections.First(c => c.Source.Url == Constants.LocalRecipeSourceUrl);
         collection.Recipes.Clear();

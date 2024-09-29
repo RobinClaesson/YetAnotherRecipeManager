@@ -21,12 +21,26 @@ public class RecipeEffects
 
     private async Task InitLocalStorage()
     {
-        if (!(await _localStorage.ContainKeyAsync(Constants.LocalStorageRecipeSources)))    
+        if (!(await _localStorage.ContainKeyAsync(Constants.LocalStorageRecipeSources)))
             await _localStorage.SetItemAsStringAsync(Constants.LocalStorageRecipeSources, $"[]");
-        
+
         if (!(await _localStorage.ContainKeyAsync(Constants.LocalStorageLocalRecipes)))
             await _localStorage.SetItemAsStringAsync(Constants.LocalStorageLocalRecipes, "[]");
 
+    }
+
+    private async Task FetchRecipesFromSource(RecipeSource source, IDispatcher dispatcher)
+    {
+        try
+        {
+            var recipes = await _httpClient.GetFromJsonAsync<List<Recipe>>($"{source.Url}/api/Recipe/GetRecipesFull");
+            if (recipes is not null)
+                dispatcher.Dispatch(new RecipesFetchedFromSourceAction(source, recipes));
+        }
+        catch
+        {
+            dispatcher.Dispatch(new ErrorOccurredAction($"Filed to load recipes from '{source.Name}'"));
+        }
     }
 
     [EffectMethod]
@@ -35,24 +49,23 @@ public class RecipeEffects
         await InitLocalStorage();
 
         //Local Storage recipes
-        var localStorageSource = new RecipeSource
+        try
         {
-            Name = Constants.LocalRecipeSourceName,
-            Url = Constants.LocalRecipeSourceUrl
-        };
-        var localRecipes = await _localStorage.GetItemAsync<List<Recipe>>(Constants.LocalStorageLocalRecipes);
-        if (localRecipes is not null)
-            dispatcher.Dispatch(new RecipesLoadedFromLocalStorageAction(localRecipes));
+            var localRecipes = await _localStorage.GetItemAsync<List<Recipe>>(Constants.LocalStorageLocalRecipes);
+            if (localRecipes is not null)
+                dispatcher.Dispatch(new RecipesLoadedFromLocalStorageAction(localRecipes));
+        }
+        catch
+        {
+            dispatcher.Dispatch(new ErrorOccurredAction($"Filed to load local Recipes"));
+        }
 
         //Other sources
         var recipeSources = await _localStorage.GetItemAsync<List<RecipeSource>>(Constants.LocalStorageRecipeSources);
-
         foreach (var source in recipeSources!)
         {
             dispatcher.Dispatch(new SourceLoadedFromLocalStorageAction(source));
-            var recipes = await _httpClient.GetFromJsonAsync<List<Recipe>>($"{source.Url}/api/Recipe/GetRecipesFull");
-            if (recipes is not null)
-                dispatcher.Dispatch(new RecipesFetchedFromSourceAction(source, recipes));
+            await FetchRecipesFromSource(source, dispatcher);
         }
     }
 
@@ -66,10 +79,7 @@ public class RecipeEffects
 
         var localStorageTask = _localStorage.SetItemAsStringAsync(Constants.LocalStorageRecipeSources, JsonSerializer.Serialize(recipeSources));
 
-        var recipes = await _httpClient.GetFromJsonAsync<List<Recipe>>($"{action.RecipeSource.Url}/api/Recipe/GetRecipesFull");
-        if (recipes is not null)
-            dispatcher.Dispatch(new RecipesFetchedFromSourceAction(action.RecipeSource, recipes));
-
+        await FetchRecipesFromSource(action.RecipeSource, dispatcher);
         await localStorageTask;
     }
 
@@ -104,12 +114,8 @@ public class RecipeEffects
 
         var localStorageTask = _localStorage.SetItemAsStringAsync(Constants.LocalStorageRecipeSources, JsonSerializer.Serialize(recipeSources));
 
-        if(action.Original.Url != action.Updated.Url)
-        {
-            var recipes = await _httpClient.GetFromJsonAsync<List<Recipe>>($"{action.Updated.Url}/api/Recipe/GetRecipesFull");
-            if (recipes is not null)
-                dispatcher.Dispatch(new RecipesFetchedFromSourceAction(action.Updated, recipes));
-        }
+        if (action.Original.Url != action.Updated.Url)
+            await FetchRecipesFromSource(action.Updated, dispatcher);
 
         await localStorageTask;
     }
