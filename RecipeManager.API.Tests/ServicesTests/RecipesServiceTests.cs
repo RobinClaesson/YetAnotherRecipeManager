@@ -277,5 +277,118 @@ namespace RecipeManager.API.Tests.ServicesTests
 
             result.Should().BeNull();
         }
+
+        [Test]
+        public void ExportRecipes_EmptyFilter_ReturnsAllRecipeContracts()
+        {
+            var expected = MockDatabase.MockRecipes.Select(RecipeContract.FromModel);
+            var result = _target.ExportRecipes(new());
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByExistingTagInOne_ReturnsOneMatchingRecipeContract()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "breakfast" } };
+            var expected = MockDatabase.MockRecipes.Where(r => r.Tags.Contains("breakfast")).Select(RecipeContract.FromModel);
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(1);
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByExistingTagInAll_ReturnsAllMatchingRecipeContracts()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "simple" } };
+            var expected = MockDatabase.MockRecipes.Select(RecipeContract.FromModel);
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByNonExistingTag_ReturnsNoRecipeContracts()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "dinner" } };
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByExistingIngredientInOne_ReturnsOneMatchingRecipeContract()
+        {
+            var filter = new RecipeFilterContract { Ingredients = new() { "Jelly" } };
+            var expected = MockDatabase.MockRecipes.Where(r => r.Ingredients.Any(i => i.Name == "Jelly")).Select(RecipeContract.FromModel);
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(1);
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByExistingIngredientInAll_ReturnsAllMatchingRecipeContracts()
+        {
+            var filter = new RecipeFilterContract { Ingredients = new() { "Milk" } };
+            var expected = MockDatabase.MockRecipes.Select(RecipeContract.FromModel);
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByNonExistingIngredient_ReturnsNoRecipeContracts()
+        {
+            var filter = new RecipeFilterContract { Ingredients = new() { "Bread" } };
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByExistingTagAndIngredientInSameRecipe_ReturnsOneMatchingRecipeContract()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "lunch" }, Ingredients = new() { "Peanut Butter" } };
+            var expected = MockDatabase.MockRecipes.Where(r => r.Tags.Contains("lunch") && r.Ingredients.Any(i => i.Name == "Peanut Butter")).Select(RecipeContract.FromModel);
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(1);
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByExistingTagAndIngredientInDifferentRecipe_ReturnsNoRecipeContracts()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "lunch" }, Ingredients = new() { "Cereal" } };
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void ExportRecipes_FilterByExistingTagAndIngredientInAllRecipes_ReturnsAllMatchingRecipeContracts()
+        {
+            var filter = new RecipeFilterContract { Tags = new() { "simple" }, Ingredients = new() { "Milk" } };
+            var expected = MockDatabase.MockRecipes.Select(RecipeContract.FromModel);
+            var result = _target.ExportRecipes(filter);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            result.Should().BeEquivalentTo(expected);
+        }
     }
 }
