@@ -390,5 +390,41 @@ namespace RecipeManager.API.Tests.ServicesTests
             result.Should().HaveCount(MockDatabase.MockRecipes.Count);
             result.Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void AddRecipe_ReturnsRecipeIdWithExpectedModelInDatabase()
+        {
+            var recipeContractToAdd = new RecipeContract
+            {
+                Name = "New Recipe",
+                Description = "A new recipe",
+                Tags = new() { "new" },
+                Servings = 1,
+                Ingredients = new()
+                {
+                    new IngredientContract { Name = "New Ingredient", Quantity = 1, Unit = Units.Cup }
+                },
+                Instructions = new()
+                {
+                    new InstructionContract { Name = "New Instruction", Order = 1, Description = "Do something" },
+                    new InstructionContract { Name = "New Instruction 2", Order = 2, Description = "Do something more" }
+                }
+            };
+
+            var resultId = _target.AddRecipe(recipeContractToAdd);
+            resultId.Should().NotBeEmpty();
+
+            _recipeContext.Recipes.Count().Should().Be(MockDatabase.MockRecipes.Count + 1);
+            _recipeContext.Ingredients.Count().Should().Be(MockDatabase.MockIngredients.Count + 1);
+            _recipeContext.Instructions.Count().Should().Be(MockDatabase.MockInstructions.Count + 2);
+
+            var expectedRecipe = recipeContractToAdd.ToModel() with { RecipeId = resultId };
+            expectedRecipe.Instructions.ForEach(i => i.RecipeId = resultId);
+            expectedRecipe.Ingredients.ForEach(i => i.RecipeId = resultId);
+
+            var resultRecipe = _target.GetRecipe(resultId);
+            resultRecipe.Should().NotBeNull();
+            RecipeVerifier.VerifyRecipeOnlyEmptyCheckChildrenId(resultRecipe!, expectedRecipe);
+        }
     }
 }
