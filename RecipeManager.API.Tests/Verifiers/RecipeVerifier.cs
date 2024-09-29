@@ -66,4 +66,48 @@ internal static class RecipeVerifier
             resultInstruction.RecipeId.Should().Be(expectedInstruction.RecipeId);
         }
     }
+
+    public static void VerifyRecipeOnlyEmptyCheckChildrenId(Recipe result, Recipe expected)
+    {
+        result.Should().NotBeNull();
+        result.RecipeId.Should().Be(expected.RecipeId);
+        result.Name.Should().BeEquivalentTo(expected.Name);
+        result.Description.Should().BeEquivalentTo(expected.Description);
+        result.Tags.Should().BeEquivalentTo(expected.Tags);
+        result.Servings.Should().Be(expected.Servings);
+
+        var expectedIngredients = expected.Ingredients.OrderBy(i => i.Name);
+        var resultIngredients = result.Ingredients.OrderBy(i => i.Name);
+
+        resultIngredients.Should().NotBeNullOrEmpty();
+        for (int j = 0; j < resultIngredients.Count(); j++)
+        {
+            var expectedIngredient = expectedIngredients.ElementAt(j);
+            var resultIngredient = resultIngredients.ElementAt(j);
+
+            resultIngredient.Should().NotBeNull();
+            resultIngredient.IngredientId.Should().NotBeEmpty();
+            resultIngredient.Name.Should().BeEquivalentTo(expectedIngredient.Name);
+            resultIngredient.Quantity.Should().Be(expectedIngredient.Quantity);
+            resultIngredient.Unit.Should().Be(expectedIngredient.Unit);
+            resultIngredient.RecipeId.Should().Be(expectedIngredient.RecipeId);
+        }
+
+        var expectedInstructions = expected.Instructions.OrderBy(i => i.Order);
+        var resultInstructions = result.Instructions.OrderBy(i => i.Order);
+
+        resultInstructions.Should().NotBeNullOrEmpty();
+        for (int j = 0; j < resultInstructions.Count(); j++)
+        {
+            var expectedInstruction = expectedInstructions.ElementAt(j);
+            var resultInstruction = resultInstructions.ElementAt(j);
+
+            resultInstruction.Should().NotBeNull();
+            resultInstruction.InstructionId.Should().NotBeEmpty();
+            resultInstruction.Name.Should().BeEquivalentTo(expectedInstruction.Name);
+            resultInstruction.Order.Should().Be(expectedInstruction.Order);
+            resultInstruction.Description.Should().BeEquivalentTo(expectedInstruction.Description);
+            resultInstruction.RecipeId.Should().Be(expectedInstruction.RecipeId);
+        }
+    }
 }
