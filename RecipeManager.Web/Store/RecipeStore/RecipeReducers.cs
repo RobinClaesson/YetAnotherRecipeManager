@@ -69,4 +69,21 @@ public static class RecipeReducers
         {
             RecipieCollections = state.RecipieCollections.Where(c => c.Source.Url != action.RecipeSource.Url).ToList()
         };
+
+    [ReducerMethod]
+    public static RecipeState OnSourceChangedAction(RecipeState state, SourceChangedAction action)
+    {
+        var next = state with { };
+
+        var original = next.RecipieCollections.First(c => c.Source.Url == action.Original.Url);
+        var updated = original with
+        {
+            Source = action.Updated
+        };
+        
+        next.RecipieCollections.Remove(original);
+        next.RecipieCollections.Add(updated);
+
+        return next;
+    }
 }

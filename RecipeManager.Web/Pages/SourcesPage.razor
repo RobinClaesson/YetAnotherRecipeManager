@@ -32,8 +32,10 @@
                     }
                     else
                     {
-                        <MudIconButton Icon="@Icons.Material.TwoTone.Edit" />
-                        <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveSourceAsync(context.Item)" />
+                        <MudButtonGroup>
+                            <MudIconButton Icon="@Icons.Material.TwoTone.Edit" OnClick="() => EditSourceAsync(context.Item)" />
+                            <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveSourceAsync(context.Item)" />
+                        </MudButtonGroup>
                     }
 
                 </CellTemplate>

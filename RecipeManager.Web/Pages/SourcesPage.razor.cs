@@ -49,6 +49,23 @@ public partial class SourcesPage
         return DialogService.ShowAsync<RemoveSourceDialog>("Remove Source", parameters, options);
     }
 
+    private Task EditSourceAsync(RecipeSource source)
+    {
+        var parameters = new DialogParameters
+        {
+            { nameof(EditSourceDialog.Name), source.Name },
+            { nameof(EditSourceDialog.Url), source.Url }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+        };
+
+        return DialogService.ShowAsync<EditSourceDialog>("Edit Source", parameters, options);
+    }
+
     private void ResetLocalSourceRecipes()
     {
         Dispatcher.Dispatch(new ResetLocalSourceRecipesAction());

@@ -92,4 +92,25 @@ public class RecipeEffects
         await _localStorage.SetItemAsStringAsync(Constants.LocalStorageLocalRecipes, "[]");
         dispatcher.Dispatch(new RecipesLoadedFromLocalStorageAction(new List<Recipe>()));
     }
+
+    [EffectMethod]
+    public async Task OnSourceChangedAction(SourceChangedAction action, IDispatcher dispatcher)
+    {
+        await InitLocalStorage();
+
+        var recipeSources = await _localStorage.GetItemAsync<List<RecipeSource>>(Constants.LocalStorageRecipeSources);
+        var index = recipeSources!.IndexOf(action.Original);
+        recipeSources[index] = action.Updated;
+
+        var localStorageTask = _localStorage.SetItemAsStringAsync(Constants.LocalStorageRecipeSources, JsonSerializer.Serialize(recipeSources));
+
+        if(action.Original.Url != action.Updated.Url)
+        {
+            var recipes = await _httpClient.GetFromJsonAsync<List<Recipe>>($"{action.Updated.Url}/api/Recipe/GetRecipesFull");
+            if (recipes is not null)
+                dispatcher.Dispatch(new RecipesFetchedFromSourceAction(action.Updated, recipes));
+        }
+
+        await localStorageTask;
+    }
 }
