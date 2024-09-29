@@ -76,6 +76,11 @@ public static class UnitsParser
             case "pieces":
                 result = Units.Piece;
                 return true;
+            case "by taste":
+            case "bytaste":
+                result = Units.ByTaste;
+                return true;
+
             default:
                 result = Units.None;
                 return false;
