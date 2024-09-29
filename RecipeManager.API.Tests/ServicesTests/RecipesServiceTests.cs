@@ -238,5 +238,44 @@ namespace RecipeManager.API.Tests.ServicesTests
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
+
+        [Test]
+        public void GetRecipe_ExistingRecipe_ReturnsRecipeWithIngredientsAndInstructions()
+        {
+            var recipeId = MockDatabase.MockRecipes[0].RecipeId;
+            var result = _target.GetRecipe(recipeId);
+
+            result.Should().NotBeNull();
+            RecipeVerifier.VerifyRecipe(result!, MockDatabase.MockRecipes[0]);
+        }
+
+        [Test]
+        public void GetRecipe_NonExistingRecipe_ReturnsNull()
+        {
+            var recipeId = Guid.NewGuid();
+            var result = _target.GetRecipe(recipeId);
+
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void ExportRecipe_ExistingRecipe_ReturnsRecipeContract()
+        {
+            var recipeId = MockDatabase.MockRecipes[0].RecipeId;
+            var expected = RecipeContract.FromModel(MockDatabase.MockRecipes[0]);
+            var result = _target.ExportRecipe(recipeId);
+
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void ExportRecipe_NonExistingRecipe_ReturnsNull()
+        {
+            var recipeId = Guid.NewGuid();
+            var result = _target.ExportRecipe(recipeId);
+
+            result.Should().BeNull();
+        }
     }
 }
