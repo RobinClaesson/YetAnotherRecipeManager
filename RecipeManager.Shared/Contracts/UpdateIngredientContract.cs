@@ -17,4 +17,14 @@ public record UpdateIngredientContract
             Quantity = ingredient.Quantity,
             Unit = ingredient.Unit
         };
+
+    public Ingredient ToModel(Guid recipeId)
+        => new Ingredient
+        {
+            IngredientId = IngredientId ?? default,
+            Name = Name ?? string.Empty,
+            Quantity = Quantity ?? 0,
+            Unit = Unit ?? Units.None,
+            RecipeId = recipeId
+        };
 }

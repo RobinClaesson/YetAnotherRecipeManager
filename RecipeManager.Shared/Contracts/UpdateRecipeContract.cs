@@ -25,4 +25,16 @@ public record UpdateRecipeContract
             Ingredients = recipe.Ingredients.Select(UpdateIngredientContract.FromModel).ToList(),
             Instructions = recipe.Instructions.Select(UpdateInstructionContract.FromModel).ToList()
         };
+
+    public Recipe ToModel()
+        => new Recipe
+        {
+            RecipeId = RecipeId,
+            Name = Name ?? string.Empty,
+            Description = Description ?? string.Empty,
+            Tags = Tags ?? new List<string>(),
+            Servings = Servings ?? 0,
+            Ingredients = Ingredients?.Select(i => i.ToModel(RecipeId)).ToList() ?? new List<Ingredient>(),
+            Instructions = Instructions?.Select(i => i.ToModel(RecipeId)).ToList() ?? new List<Instruction>()
+        };
 }

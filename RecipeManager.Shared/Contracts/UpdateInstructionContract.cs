@@ -17,4 +17,14 @@ public record UpdateInstructionContract
             Order = instruction.Order,
             Description = instruction.Description
         };
+
+    public Instruction ToModel(Guid recipeId)
+        => new Instruction
+        {
+            InstructionId = InstructionId ?? default,
+            Name = Name ?? string.Empty,
+            Order = Order ?? 0,
+            Description = Description ?? string.Empty,
+            RecipeId = recipeId
+        };
 }
