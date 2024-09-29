@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using RecipeManager.Shared.Models;
 using RecipeManager.Web.Models.RecipeStore;
 
 namespace RecipeManager.Web.Store.RecipeStore;
@@ -10,8 +11,10 @@ public static class RecipeReducers
     {
         var next = state with { };
 
-        next.RecipieCollections.First(c => c.Source.Url == action.RecipeSource.Url)
-                            .Recipes.AddRange(action.Recipes);
+        var collection = next.RecipieCollections.First(c => c.Source.Url == action.RecipeSource.Url);
+        collection.Recipes.Clear();
+        collection.Recipes.AddRange(action.Recipes);
+
         return next;
     }
 
@@ -41,8 +44,10 @@ public static class RecipeReducers
                 },
             });
 
-        next.RecipieCollections.First(c => c.Source.Url == Constants.LocalRecipeSourceUrl)
-                                .Recipes.AddRange(action.Recipes);
+        var collection = next.RecipieCollections.First(c => c.Source.Url == Constants.LocalRecipeSourceUrl);
+        collection.Recipes.Clear();
+        collection.Recipes.AddRange(action.Recipes);
+
         return next;
     }
 
