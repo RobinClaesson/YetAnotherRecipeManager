@@ -27,7 +27,7 @@
                     && context.Item.Name != Constants.LocalRecipeSourceName)
                     {
                         <MudIconButton Icon="@Icons.Material.TwoTone.Edit" />
-                        <MudIconButton Icon="@Icons.Material.TwoTone.Delete" />
+                        <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveSourceAsync(context.Item)"/>
                     }
                 </CellTemplate>
             </TemplateColumn>

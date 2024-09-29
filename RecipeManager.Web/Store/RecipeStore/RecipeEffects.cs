@@ -72,4 +72,17 @@ public class RecipeEffects
 
         await localStorageTask;
     }
+
+    [EffectMethod]
+    public async Task OnSourceRemovedAction(SourceRemovedAction action, IDispatcher dispatcher)
+    {
+        await InitLocalStorage();
+
+        var recipeSources = await _localStorage.GetItemAsync<List<RecipeSource>>(Constants.LocalStorageRecipeSources);
+        recipeSources!.Remove(action.RecipeSource);
+
+        var localStorageTask = _localStorage.SetItemAsStringAsync(Constants.LocalStorageRecipeSources, JsonSerializer.Serialize(recipeSources));
+
+        await localStorageTask;
+    }
 }

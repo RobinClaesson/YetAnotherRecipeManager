@@ -28,4 +28,21 @@ public partial class SourcesPage
 
         return DialogService.ShowAsync<AddSourceDialog>("Add Source", options);
     }
+
+    private Task RemoveSourceAsync(RecipeSource source)
+    {
+        var parameters = new DialogParameters
+        {
+            { nameof(RemoveSourceDialog.Name), source.Name },
+            { nameof(RemoveSourceDialog.Url), source.Url }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+        };
+
+        return DialogService.ShowAsync<RemoveSourceDialog>("Remove Source", parameters, options);
+    }
 }
