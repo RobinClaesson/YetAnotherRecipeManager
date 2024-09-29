@@ -1,4 +1,6 @@
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Bson;
 using RecipeManager.API.Services;
 using RecipeManager.API.Tests.Verifiers;
@@ -425,6 +427,83 @@ namespace RecipeManager.API.Tests.ServicesTests
             var resultRecipe = _target.GetRecipe(resultId);
             resultRecipe.Should().NotBeNull();
             RecipeVerifier.VerifyRecipeOnlyEmptyCheckChildrenId(resultRecipe!, expectedRecipe);
+        }
+
+        [Test]
+        public void DeleteRecipe_ExistingRecipeId_RemovesRecipeFromDatabase()
+        {
+            var recipeId = MockDatabase.MockRecipes[0].RecipeId;
+            var deletedId = _target.DeleteRecipe(recipeId);
+
+            deletedId.Should().Be(recipeId);
+
+            _recipeContext.Recipes.Count().Should().Be(MockDatabase.MockRecipes.Count - 1);
+            _recipeContext.Ingredients.Count().Should().Be(MockDatabase.MockIngredients.Count - 2);
+            _recipeContext.Instructions.Count().Should().Be(MockDatabase.MockInstructions.Count - 2);
+
+            var resultRecipe = _target.GetRecipe(recipeId);
+            resultRecipe.Should().BeNull();
+        }
+
+        [Test]
+        public void DeleteRecipe_NonExistingRecipeId_ReturnsNullAndDatabaseUnchanged()
+        {
+            var recipeId = Guid.NewGuid();
+            var result = _target.DeleteRecipe(recipeId);
+
+            result.Should().BeNull();
+
+            DatabaseVerifier.VerifyUnchangedDatabase(_recipeContext);
+        }
+
+        [Test]
+        public void DeleteRecipes_EmptyList_ReturnsEmptyListAndDatabaseUnchanged()
+        {
+            var result = _target.DeleteRecipes(new Guid[0]);
+
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+
+            DatabaseVerifier.VerifyUnchangedDatabase(_recipeContext);
+        }
+
+        [Test]
+        public void DeleteRecipes_ListWithNonExistingRecipeIds_ReturnsEmptyListAndDatabaseUnchanged()
+        {
+            var result = _target.DeleteRecipes([Guid.NewGuid(), Guid.NewGuid()]);
+
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
+
+            DatabaseVerifier.VerifyUnchangedDatabase(_recipeContext);
+        }
+
+        [Test]
+        public void DeleteRecipes_ListWithAllExistingRecipeIds_ReturnsAllIdsAndRemovesRecipesFromDatabase()
+        {
+            var recipeIds = MockDatabase.MockRecipes.Select(r => r.RecipeId).ToList();
+            var result = _target.DeleteRecipes(recipeIds);
+
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(recipeIds);
+
+            _recipeContext.Recipes.Count().Should().Be(0);
+            _recipeContext.Ingredients.Count().Should().Be(0);
+            _recipeContext.Instructions.Count().Should().Be(0);
+        }
+
+        [Test]
+        public void DeleteRecipes_ListWithMixedExistingAndNonExistingIds_ReturnsOnlyExistingIdsAndRemovesExistingRecipesFromDatabase()
+        {
+            var result = _target.DeleteRecipes([Guid.NewGuid(), MockDatabase.MockRecipes[1].RecipeId, Guid.NewGuid()]);
+
+            result.Should().NotBeNull();
+            result.Should().HaveCount(1);
+            result.Should().BeEquivalentTo([MockDatabase.MockRecipes[1].RecipeId]);
+
+            _recipeContext.Recipes.Count().Should().Be(MockDatabase.MockRecipes.Count - 1);
+            _recipeContext.Ingredients.Count().Should().Be(MockDatabase.MockIngredients.Count - 4);
+            _recipeContext.Instructions.Count().Should().Be(MockDatabase.MockInstructions.Count - 4);
         }
     }
 }
