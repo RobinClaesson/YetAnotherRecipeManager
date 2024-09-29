@@ -6,7 +6,7 @@
 <PageTitle>YARM - Sources</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 1.5rem;">
-    
+
     <MudDataGrid T="RecipeSource" Items="@RecipeSources" RowsPerPage="100">
         <ToolBarContent>
             <MudText Typo="Typo.h4">Sources</MudText>
@@ -23,12 +23,19 @@
             <PropertyColumn Property="x => x.Url" Title="Location" />
             <TemplateColumn Title="">
                 <CellTemplate>
-                    @if (context.Item.Name != Constants.LocalRecipeSourceName
-                    && context.Item.Name != Constants.LocalRecipeSourceName)
+                    @if (context.Item.Name == Constants.LocalRecipeSourceName
+                    && context.Item.Name == Constants.LocalRecipeSourceName)
+                    {
+                        <MudButton Variant="Variant.Outlined" OnClick="ResetLocalSourceRecipes">
+                            Reset
+                        </MudButton>
+                    }
+                    else
                     {
                         <MudIconButton Icon="@Icons.Material.TwoTone.Edit" />
-                        <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveSourceAsync(context.Item)"/>
+                        <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveSourceAsync(context.Item)" />
                     }
+
                 </CellTemplate>
             </TemplateColumn>
         </Columns>

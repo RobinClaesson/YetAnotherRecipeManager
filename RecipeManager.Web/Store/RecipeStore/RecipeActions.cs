@@ -10,3 +10,5 @@ public record RecipesFetchedFromSourceAction(RecipeSource RecipeSource, List<Rec
 public record SourceAddedAction(RecipeSource RecipeSource);
 public record SourceChangedAction(RecipeSource orignal, RecipeSource updated);
 public record SourceRemovedAction(RecipeSource RecipeSource);
+
+public record ResetLocalSourceRecipesAction();

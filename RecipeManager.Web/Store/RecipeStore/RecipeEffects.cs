@@ -85,4 +85,11 @@ public class RecipeEffects
 
         await localStorageTask;
     }
+
+    [EffectMethod]
+    public async Task OnResetLocalSourceRecipesAction(ResetLocalSourceRecipesAction action, IDispatcher dispatcher)
+    {
+        await _localStorage.SetItemAsStringAsync(Constants.LocalStorageLocalRecipes, "[]");
+        dispatcher.Dispatch(new RecipesLoadedFromLocalStorageAction(new List<Recipe>()));
+    }
 }
