@@ -12,6 +12,7 @@ internal static class MockDatabase
 		options.UseSqlite("Data Source=MockDatabase.db");
 
 		var context = new RecipeContext(options.Options);
+		context.Database.EnsureDeleted(); //In case TearDown was not called (ex aborted test debug session)
 		context.Database.EnsureCreated();
 
 		context.Recipes.AddRange(MockRecipes);
