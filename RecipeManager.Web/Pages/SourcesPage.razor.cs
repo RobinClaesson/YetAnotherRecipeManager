@@ -15,8 +15,6 @@ public partial class SourcesPage
     [Inject]
     IDialogService DialogService { get; set; } = default!;
 
-    [Inject]
-    IDispatcher Dispatcher { get; set; } = default!;
 
     private IEnumerable<RecipeSource> RecipeSources
         => RecipeState.Value.RecipieCollections.Select(r => r.Source);
@@ -66,8 +64,14 @@ public partial class SourcesPage
         return DialogService.ShowAsync<EditSourceDialog>("Edit Source", parameters, options);
     }
 
-    private void ResetLocalSourceRecipes()
+    private Task ResetLocalSourceRecipesAsync()
     {
-        Dispatcher.Dispatch(new ResetLocalSourceRecipesAction());
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+        };
+
+        return DialogService.ShowAsync<ResetLocalDialog>("Reset Local Source", options);
     }
 }
