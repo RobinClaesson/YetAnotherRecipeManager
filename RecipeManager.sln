@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeManager.CLI", "Recipe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeManager.Web", "RecipeManager.Web\RecipeManager.Web.csproj", "{186E8541-AB38-4244-9F3F-5CC00A68896C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeManager.API.Tests", "RecipeManager.API.Tests\RecipeManager.API.Tests.csproj", "{FAB32A08-B8BC-4D33-AE5A-F98317BA49C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeManager.API.Tests", "RecipeManager.API.Tests\RecipeManager.API.Tests.csproj", "{FAB32A08-B8BC-4D33-AE5A-F98317BA49C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

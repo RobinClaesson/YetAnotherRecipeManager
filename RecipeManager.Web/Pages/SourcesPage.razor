@@ -1,6 +1,36 @@
 ﻿@inherits FluxorComponent
 @page "/sources"
+@using RecipeManager.Web.Models.RecipeStore
 
 
 <PageTitle>YARM - Sources</PageTitle>
 
+<MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 1.5rem;">
+    
+    <MudDataGrid T="RecipeSource" Items="@RecipeSources" RowsPerPage="100">
+        <ToolBarContent>
+            <MudText Typo="Typo.h4">Sources</MudText>
+            <MudSpacer />
+            <MudButton Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.TwoTone.PostAdd"
+                       Size="Size.Large"
+                       OnClick="AddSourceAsync">
+                Add Source
+            </MudButton>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="Name" />
+            <PropertyColumn Property="x => x.Url" Title="Location" />
+            <TemplateColumn Title="">
+                <CellTemplate>
+                    @if (context.Item.Name != Constants.LocalRecipeSourceName
+                    && context.Item.Name != Constants.LocalRecipeSourceName)
+                    {
+                        <MudIconButton Icon="@Icons.Material.TwoTone.Edit" />
+                        <MudIconButton Icon="@Icons.Material.TwoTone.Delete" />
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudContainer>

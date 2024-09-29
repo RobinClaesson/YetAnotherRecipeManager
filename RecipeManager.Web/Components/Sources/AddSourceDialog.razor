@@ -1,0 +1,33 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Add Source</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField Label="Name" Variant="Variant.Filled" @bind-Value="_name" />
+        <MudTextField Label="Location" Variant="Variant.Filled" @bind-Value="_url" />
+        @if (NameIsEmpty)
+        {
+            <MudAlert Severity="Severity.Warning">Name is required</MudAlert>
+        }
+        @if (NameExists)
+        {
+            <MudAlert Severity="Severity.Error">Name already exists</MudAlert>
+        }
+        @if (UrlIsEmpty)
+        {
+            <MudAlert Severity="Severity.Warning">Location is required</MudAlert>
+        }
+        @if (UrlExists)
+        {
+            <MudAlert Severity="Severity.Error">Location already exists</MudAlert>
+        }
+        @if (!DisableAdd)
+        {
+            <MudAlert Severity="Severity.Success">Click Add to save</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Add" Disabled="DisableAdd">Add</MudButton>
+    </DialogActions>
+</MudDialog>
