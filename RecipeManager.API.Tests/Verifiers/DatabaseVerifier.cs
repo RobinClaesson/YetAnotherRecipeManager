@@ -6,15 +6,15 @@ namespace RecipeManager.API.Tests.Verifiers;
 
 internal static class DatabaseVerifier
 {
-    public static void VerifyUnchangedDatabase(RecipeContext context)
+    public static void VerifyUnchangedDatabase(MockDatabase database)
     {
-        context.Recipes.Count().Should().Be(MockDatabase.MockRecipes.Count);
-        context.Ingredients.Count().Should().Be(MockDatabase.MockIngredients.Count);
-        context.Instructions.Count().Should().Be(MockDatabase.MockInstructions.Count);
+        database.RecipeContext.Recipes.Count().Should().Be(database.MockRecipes.Count);
+        database.RecipeContext.Ingredients.Count().Should().Be(database.MockIngredients.Count);
+        database.RecipeContext.Instructions.Count().Should().Be(database.MockInstructions.Count);
 
-        var resultDatabase = context.Recipes.Include(r => r.Ingredients)
+        var resultDatabase = database.RecipeContext.Recipes.Include(r => r.Ingredients)
                                                     .Include(r => r.Instructions);
 
-        RecipeVerifier.VerifyRecipeIEnumerable(resultDatabase, MockDatabase.MockRecipes);
+        RecipeVerifier.VerifyRecipeIEnumerable(resultDatabase, database.MockRecipes);
     }
 }

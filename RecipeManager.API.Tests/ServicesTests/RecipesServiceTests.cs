@@ -13,20 +13,19 @@ namespace RecipeManager.API.Tests.ServicesTests
     public class RecipesServiceTests
     {
         private RecipesService _target;
-        private RecipeContext _recipeContext;
+        private MockDatabase _database;
 
         [SetUp]
         public void Setup()
         {
-            _recipeContext = MockDatabase.DatabaseSetup();
-            _target = new RecipesService(_recipeContext);
+            _database = new();
+            _target = new(_database.RecipeContext);
         }
 
         [TearDown]
         public void TearDown()
         {
-            MockDatabase.DatabaseTeardown(_recipeContext);
-            _recipeContext.Dispose();
+            _database.Dispose();
         }
 
         [Test]
@@ -35,8 +34,8 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.GetRecipeIds();
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
-            foreach (var recipe in MockDatabase.MockRecipes)
+            result.Should().HaveCount(_database.MockRecipes.Count);
+            foreach (var recipe in _database.MockRecipes)
                 result.Should().Contain(recipe.RecipeId);
         }
 
@@ -46,8 +45,8 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.ListAllRecipes();
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
-            foreach (var recipe in MockDatabase.MockRecipes)
+            result.Should().HaveCount(_database.MockRecipes.Count);
+            foreach (var recipe in _database.MockRecipes)
                 result.Should().Contain(recipe.Name);
         }
 
@@ -57,8 +56,8 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.GetRecipesInfo(new());
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
-            foreach (var recipe in MockDatabase.MockRecipes)
+            result.Should().HaveCount(_database.MockRecipes.Count);
+            foreach (var recipe in _database.MockRecipes)
                 result.Should().ContainEquivalentOf(recipe with { Ingredients = new(), Instructions = new() });
         }
 
@@ -70,7 +69,7 @@ namespace RecipeManager.API.Tests.ServicesTests
 
             result.Should().NotBeNullOrEmpty();
             result.Should().HaveCount(1);
-            result.Should().ContainEquivalentOf(MockDatabase.MockRecipes[0] with { Ingredients = new(), Instructions = new() });
+            result.Should().ContainEquivalentOf(_database.MockRecipes[0] with { Ingredients = new(), Instructions = new() });
         }
 
         [Test]
@@ -80,8 +79,8 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.GetRecipesInfo(filter);
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
-            foreach (var recipe in MockDatabase.MockRecipes)
+            result.Should().HaveCount(_database.MockRecipes.Count);
+            foreach (var recipe in _database.MockRecipes)
                 result.Should().ContainEquivalentOf(recipe with { Ingredients = new(), Instructions = new() });
         }
 
@@ -103,7 +102,7 @@ namespace RecipeManager.API.Tests.ServicesTests
 
             result.Should().NotBeNullOrEmpty();
             result.Should().HaveCount(1);
-            result.Should().ContainEquivalentOf(MockDatabase.MockRecipes[1] with { Ingredients = new(), Instructions = new() });
+            result.Should().ContainEquivalentOf(_database.MockRecipes[1] with { Ingredients = new(), Instructions = new() });
         }
 
         [Test]
@@ -113,8 +112,8 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.GetRecipesInfo(filter);
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
-            foreach (var recipe in MockDatabase.MockRecipes)
+            result.Should().HaveCount(_database.MockRecipes.Count);
+            foreach (var recipe in _database.MockRecipes)
                 result.Should().ContainEquivalentOf(recipe with { Ingredients = new(), Instructions = new() });
         }
 
@@ -136,7 +135,7 @@ namespace RecipeManager.API.Tests.ServicesTests
 
             result.Should().NotBeNullOrEmpty();
             result.Should().HaveCount(1);
-            result.Should().ContainEquivalentOf(MockDatabase.MockRecipes[1] with { Ingredients = new(), Instructions = new() });
+            result.Should().ContainEquivalentOf(_database.MockRecipes[1] with { Ingredients = new(), Instructions = new() });
         }
 
         [Test]
@@ -155,7 +154,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.GetRecipesFull(new());
 
             result.Should().NotBeNullOrEmpty();
-            RecipeVerifier.VerifyRecipeIEnumerable(result, MockDatabase.MockRecipes);
+            RecipeVerifier.VerifyRecipeIEnumerable(result, _database.MockRecipes);
         }
 
         [Test]
@@ -166,7 +165,7 @@ namespace RecipeManager.API.Tests.ServicesTests
 
             result.Should().NotBeNullOrEmpty();
             result.Should().HaveCount(1);
-            RecipeVerifier.VerifyRecipe(result.First(), MockDatabase.MockRecipes[0]);
+            RecipeVerifier.VerifyRecipe(result.First(), _database.MockRecipes[0]);
         }
 
         [Test]
@@ -176,7 +175,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.GetRecipesFull(filter);
 
             result.Should().NotBeNullOrEmpty();
-            RecipeVerifier.VerifyRecipeIEnumerable(result, MockDatabase.MockRecipes);
+            RecipeVerifier.VerifyRecipeIEnumerable(result, _database.MockRecipes);
         }
 
         [Test]
@@ -197,7 +196,7 @@ namespace RecipeManager.API.Tests.ServicesTests
 
             result.Should().NotBeNullOrEmpty();
             result.Should().HaveCount(1);
-            RecipeVerifier.VerifyRecipe(result.First(), MockDatabase.MockRecipes[1]);
+            RecipeVerifier.VerifyRecipe(result.First(), _database.MockRecipes[1]);
         }
 
         [Test]
@@ -207,7 +206,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.GetRecipesFull(filter);
 
             result.Should().NotBeNullOrEmpty();
-            RecipeVerifier.VerifyRecipeIEnumerable(result, MockDatabase.MockRecipes);
+            RecipeVerifier.VerifyRecipeIEnumerable(result, _database.MockRecipes);
         }
 
         [Test]
@@ -228,7 +227,7 @@ namespace RecipeManager.API.Tests.ServicesTests
 
             result.Should().NotBeNullOrEmpty();
             result.Should().HaveCount(1);
-            RecipeVerifier.VerifyRecipe(result.First(), MockDatabase.MockRecipes[1]);
+            RecipeVerifier.VerifyRecipe(result.First(), _database.MockRecipes[1]);
         }
 
         [Test]
@@ -244,11 +243,11 @@ namespace RecipeManager.API.Tests.ServicesTests
         [Test]
         public void GetRecipe_ExistingRecipe_ReturnsRecipeWithIngredientsAndInstructions()
         {
-            var recipeId = MockDatabase.MockRecipes[0].RecipeId;
+            var recipeId = _database.MockRecipes[0].RecipeId;
             var result = _target.GetRecipe(recipeId);
 
             result.Should().NotBeNull();
-            RecipeVerifier.VerifyRecipe(result!, MockDatabase.MockRecipes[0]);
+            RecipeVerifier.VerifyRecipe(result!, _database.MockRecipes[0]);
         }
 
         [Test]
@@ -263,8 +262,8 @@ namespace RecipeManager.API.Tests.ServicesTests
         [Test]
         public void ExportRecipe_ExistingRecipe_ReturnsRecipeContract()
         {
-            var recipeId = MockDatabase.MockRecipes[0].RecipeId;
-            var expected = RecipeContract.FromModel(MockDatabase.MockRecipes[0]);
+            var recipeId = _database.MockRecipes[0].RecipeId;
+            var expected = RecipeContract.FromModel(_database.MockRecipes[0]);
             var result = _target.ExportRecipe(recipeId);
 
             result.Should().NotBeNull();
@@ -283,11 +282,11 @@ namespace RecipeManager.API.Tests.ServicesTests
         [Test]
         public void ExportRecipes_EmptyFilter_ReturnsAllRecipeContracts()
         {
-            var expected = MockDatabase.MockRecipes.Select(RecipeContract.FromModel);
+            var expected = _database.MockRecipes.Select(RecipeContract.FromModel);
             var result = _target.ExportRecipes(new());
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            result.Should().HaveCount(_database.MockRecipes.Count);
             result.Should().BeEquivalentTo(expected);
         }
 
@@ -295,7 +294,7 @@ namespace RecipeManager.API.Tests.ServicesTests
         public void ExportRecipes_FilterByExistingTagInOne_ReturnsOneMatchingRecipeContract()
         {
             var filter = new RecipeFilterContract { Tags = new() { "breakfast" } };
-            var expected = MockDatabase.MockRecipes.Where(r => r.Tags.Contains("breakfast")).Select(RecipeContract.FromModel);
+            var expected = _database.MockRecipes.Where(r => r.Tags.Contains("breakfast")).Select(RecipeContract.FromModel);
             var result = _target.ExportRecipes(filter);
 
             result.Should().NotBeNullOrEmpty();
@@ -307,11 +306,11 @@ namespace RecipeManager.API.Tests.ServicesTests
         public void ExportRecipes_FilterByExistingTagInAll_ReturnsAllMatchingRecipeContracts()
         {
             var filter = new RecipeFilterContract { Tags = new() { "simple" } };
-            var expected = MockDatabase.MockRecipes.Select(RecipeContract.FromModel);
+            var expected = _database.MockRecipes.Select(RecipeContract.FromModel);
             var result = _target.ExportRecipes(filter);
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            result.Should().HaveCount(_database.MockRecipes.Count);
             result.Should().BeEquivalentTo(expected);
         }
 
@@ -329,7 +328,7 @@ namespace RecipeManager.API.Tests.ServicesTests
         public void ExportRecipes_FilterByExistingIngredientInOne_ReturnsOneMatchingRecipeContract()
         {
             var filter = new RecipeFilterContract { Ingredients = new() { "Jelly" } };
-            var expected = MockDatabase.MockRecipes.Where(r => r.Ingredients.Any(i => i.Name == "Jelly")).Select(RecipeContract.FromModel);
+            var expected = _database.MockRecipes.Where(r => r.Ingredients.Any(i => i.Name == "Jelly")).Select(RecipeContract.FromModel);
             var result = _target.ExportRecipes(filter);
 
             result.Should().NotBeNullOrEmpty();
@@ -341,11 +340,11 @@ namespace RecipeManager.API.Tests.ServicesTests
         public void ExportRecipes_FilterByExistingIngredientInAll_ReturnsAllMatchingRecipeContracts()
         {
             var filter = new RecipeFilterContract { Ingredients = new() { "Milk" } };
-            var expected = MockDatabase.MockRecipes.Select(RecipeContract.FromModel);
+            var expected = _database.MockRecipes.Select(RecipeContract.FromModel);
             var result = _target.ExportRecipes(filter);
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            result.Should().HaveCount(_database.MockRecipes.Count);
             result.Should().BeEquivalentTo(expected);
         }
 
@@ -363,7 +362,7 @@ namespace RecipeManager.API.Tests.ServicesTests
         public void ExportRecipes_FilterByExistingTagAndIngredientInSameRecipe_ReturnsOneMatchingRecipeContract()
         {
             var filter = new RecipeFilterContract { Tags = new() { "lunch" }, Ingredients = new() { "Peanut Butter" } };
-            var expected = MockDatabase.MockRecipes.Where(r => r.Tags.Contains("lunch") && r.Ingredients.Any(i => i.Name == "Peanut Butter")).Select(RecipeContract.FromModel);
+            var expected = _database.MockRecipes.Where(r => r.Tags.Contains("lunch") && r.Ingredients.Any(i => i.Name == "Peanut Butter")).Select(RecipeContract.FromModel);
             var result = _target.ExportRecipes(filter);
 
             result.Should().NotBeNullOrEmpty();
@@ -385,11 +384,11 @@ namespace RecipeManager.API.Tests.ServicesTests
         public void ExportRecipes_FilterByExistingTagAndIngredientInAllRecipes_ReturnsAllMatchingRecipeContracts()
         {
             var filter = new RecipeFilterContract { Tags = new() { "simple" }, Ingredients = new() { "Milk" } };
-            var expected = MockDatabase.MockRecipes.Select(RecipeContract.FromModel);
+            var expected = _database.MockRecipes.Select(RecipeContract.FromModel);
             var result = _target.ExportRecipes(filter);
 
             result.Should().NotBeNullOrEmpty();
-            result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+            result.Should().HaveCount(_database.MockRecipes.Count);
             result.Should().BeEquivalentTo(expected);
         }
 
@@ -416,9 +415,9 @@ namespace RecipeManager.API.Tests.ServicesTests
             var resultId = _target.AddRecipe(recipeContractToAdd);
             resultId.Should().NotBeEmpty();
 
-            _recipeContext.Recipes.Count().Should().Be(MockDatabase.MockRecipes.Count + 1);
-            _recipeContext.Ingredients.Count().Should().Be(MockDatabase.MockIngredients.Count + 1);
-            _recipeContext.Instructions.Count().Should().Be(MockDatabase.MockInstructions.Count + 2);
+            _database.RecipeContext.Recipes.Count().Should().Be(_database.MockRecipes.Count + 1);
+            _database.RecipeContext.Ingredients.Count().Should().Be(_database.MockIngredients.Count + 1);
+            _database.RecipeContext.Instructions.Count().Should().Be(_database.MockInstructions.Count + 2);
 
             var expectedRecipe = recipeContractToAdd.ToModel() with { RecipeId = resultId };
             expectedRecipe.Instructions.ForEach(i => i.RecipeId = resultId);
@@ -432,14 +431,14 @@ namespace RecipeManager.API.Tests.ServicesTests
         [Test]
         public void DeleteRecipe_ExistingRecipeId_RemovesRecipeFromDatabase()
         {
-            var recipeId = MockDatabase.MockRecipes[0].RecipeId;
+            var recipeId = _database.MockRecipes[0].RecipeId;
             var deletedId = _target.DeleteRecipe(recipeId);
 
             deletedId.Should().Be(recipeId);
 
-            _recipeContext.Recipes.Count().Should().Be(MockDatabase.MockRecipes.Count - 1);
-            _recipeContext.Ingredients.Count().Should().Be(MockDatabase.MockIngredients.Count - 2);
-            _recipeContext.Instructions.Count().Should().Be(MockDatabase.MockInstructions.Count - 2);
+            _database.RecipeContext.Recipes.Count().Should().Be(_database.MockRecipes.Count - 1);
+            _database.RecipeContext.Ingredients.Count().Should().Be(_database.MockIngredients.Count - 2);
+            _database.RecipeContext.Instructions.Count().Should().Be(_database.MockInstructions.Count - 2);
 
             var resultRecipe = _target.GetRecipe(recipeId);
             resultRecipe.Should().BeNull();
@@ -453,7 +452,7 @@ namespace RecipeManager.API.Tests.ServicesTests
 
             result.Should().BeNull();
 
-            DatabaseVerifier.VerifyUnchangedDatabase(_recipeContext);
+            DatabaseVerifier.VerifyUnchangedDatabase(_database);
         }
 
         [Test]
@@ -464,7 +463,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             result.Should().NotBeNull();
             result.Should().BeEmpty();
 
-            DatabaseVerifier.VerifyUnchangedDatabase(_recipeContext);
+            DatabaseVerifier.VerifyUnchangedDatabase(_database);
         }
 
         [Test]
@@ -475,35 +474,35 @@ namespace RecipeManager.API.Tests.ServicesTests
             result.Should().NotBeNull();
             result.Should().BeEmpty();
 
-            DatabaseVerifier.VerifyUnchangedDatabase(_recipeContext);
+            DatabaseVerifier.VerifyUnchangedDatabase(_database);
         }
 
         [Test]
         public void DeleteRecipes_ListWithAllExistingRecipeIds_ReturnsAllIdsAndRemovesRecipesFromDatabase()
         {
-            var recipeIds = MockDatabase.MockRecipes.Select(r => r.RecipeId).ToList();
+            var recipeIds = _database.MockRecipes.Select(r => r.RecipeId).ToList();
             var result = _target.DeleteRecipes(recipeIds);
 
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(recipeIds);
 
-            _recipeContext.Recipes.Count().Should().Be(0);
-            _recipeContext.Ingredients.Count().Should().Be(0);
-            _recipeContext.Instructions.Count().Should().Be(0);
+            _database.RecipeContext.Recipes.Count().Should().Be(0);
+            _database.RecipeContext.Ingredients.Count().Should().Be(0);
+            _database.RecipeContext.Instructions.Count().Should().Be(0);
         }
 
         [Test]
         public void DeleteRecipes_ListWithMixedExistingAndNonExistingIds_ReturnsOnlyExistingIdsAndRemovesExistingRecipesFromDatabase()
         {
-            var result = _target.DeleteRecipes([Guid.NewGuid(), MockDatabase.MockRecipes[1].RecipeId, Guid.NewGuid()]);
+            var result = _target.DeleteRecipes([Guid.NewGuid(), _database.MockRecipes[1].RecipeId, Guid.NewGuid()]);
 
             result.Should().NotBeNull();
             result.Should().HaveCount(1);
-            result.Should().BeEquivalentTo([MockDatabase.MockRecipes[1].RecipeId]);
+            result.Should().BeEquivalentTo([_database.MockRecipes[1].RecipeId]);
 
-            _recipeContext.Recipes.Count().Should().Be(MockDatabase.MockRecipes.Count - 1);
-            _recipeContext.Ingredients.Count().Should().Be(MockDatabase.MockIngredients.Count - 4);
-            _recipeContext.Instructions.Count().Should().Be(MockDatabase.MockInstructions.Count - 4);
+            _database.RecipeContext.Recipes.Count().Should().Be(_database.MockRecipes.Count - 1);
+            _database.RecipeContext.Ingredients.Count().Should().Be(_database.MockIngredients.Count - 4);
+            _database.RecipeContext.Instructions.Count().Should().Be(_database.MockInstructions.Count - 4);
         }
 
         [Test]
@@ -529,7 +528,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.UpdateRecipe(updateRecipeContract);
 
             result.Should().BeNull();
-            DatabaseVerifier.VerifyUnchangedDatabase(_recipeContext);
+            DatabaseVerifier.VerifyUnchangedDatabase(_database);
         }
 
         [Test]
@@ -537,7 +536,7 @@ namespace RecipeManager.API.Tests.ServicesTests
         {
             var updateRecipeContract = new UpdateRecipeContract
             {
-                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
+                RecipeId = _database.MockRecipes[0].RecipeId,
                 Name = "Updated Recipe",
                 Description = "An updated recipe",
                 Tags = new() { "updated" },
@@ -549,7 +548,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.UpdateRecipe(updateRecipeContract);
             result.Should().Be(updateRecipeContract.RecipeId);
 
-            var expectedRecipe = MockDatabase.MockRecipes[0] with
+            var expectedRecipe = _database.MockRecipes[0] with
             {
                 Name = updateRecipeContract.Name,
                 Description = updateRecipeContract.Description,
@@ -566,8 +565,8 @@ namespace RecipeManager.API.Tests.ServicesTests
         {
             var updateRecipeContract = new UpdateRecipeContract
             {
-                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
-                Ingredients = MockDatabase.MockRecipes[0].Ingredients
+                RecipeId = _database.MockRecipes[0].RecipeId,
+                Ingredients = _database.MockRecipes[0].Ingredients
                             .Select(UpdateIngredientContract.FromModel).ToList()
             };
             updateRecipeContract.Ingredients[0].Name = "Changed ingredient name";
@@ -575,7 +574,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.UpdateRecipe(updateRecipeContract);
             result.Should().Be(updateRecipeContract.RecipeId);
 
-            var expectedRecipe = MockDatabase.MockRecipes[0] with { };
+            var expectedRecipe = _database.MockRecipes[0] with { };
             expectedRecipe.Ingredients[0].Name = updateRecipeContract.Ingredients[0].Name!;
             var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
 
@@ -593,8 +592,8 @@ namespace RecipeManager.API.Tests.ServicesTests
             };
             var updateRecipeContract = new UpdateRecipeContract
             {
-                RecipeId = MockDatabase.MockRecipes[1].RecipeId,
-                Ingredients = MockDatabase.MockRecipes[1].Ingredients
+                RecipeId = _database.MockRecipes[1].RecipeId,
+                Ingredients = _database.MockRecipes[1].Ingredients
                             .Select(UpdateIngredientContract.FromModel).ToList()
             };
             updateRecipeContract.Ingredients.Add(newIngredient);
@@ -602,7 +601,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.UpdateRecipe(updateRecipeContract);
             result.Should().Be(updateRecipeContract.RecipeId);
 
-            var expectedRecipe = MockDatabase.MockRecipes[1] with { };
+            var expectedRecipe = _database.MockRecipes[1] with { };
             expectedRecipe.Ingredients.Add(newIngredient.ToModel(updateRecipeContract.RecipeId));
             var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
 
@@ -614,8 +613,8 @@ namespace RecipeManager.API.Tests.ServicesTests
         {
             var updateRecipeContract = new UpdateRecipeContract
             {
-                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
-                Ingredients = MockDatabase.MockRecipes[0].Ingredients
+                RecipeId = _database.MockRecipes[0].RecipeId,
+                Ingredients = _database.MockRecipes[0].Ingredients
                             .Select(UpdateIngredientContract.FromModel).ToList()
             };
             updateRecipeContract.Ingredients.RemoveAt(0);
@@ -623,7 +622,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.UpdateRecipe(updateRecipeContract);
             result.Should().Be(updateRecipeContract.RecipeId);
 
-            var expectedRecipe = MockDatabase.MockRecipes[0] with { };
+            var expectedRecipe = _database.MockRecipes[0] with { };
             expectedRecipe.Ingredients.RemoveAt(0);
             var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
 
@@ -635,8 +634,8 @@ namespace RecipeManager.API.Tests.ServicesTests
         {
             var updateRecipeContract = new UpdateRecipeContract
             {
-                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
-                Instructions = MockDatabase.MockRecipes[0].Instructions
+                RecipeId = _database.MockRecipes[0].RecipeId,
+                Instructions = _database.MockRecipes[0].Instructions
                             .Select(UpdateInstructionContract.FromModel).ToList()
             };
             updateRecipeContract.Instructions[0].Name = "Changed instruction name";
@@ -644,7 +643,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.UpdateRecipe(updateRecipeContract);
             result.Should().Be(updateRecipeContract.RecipeId);
 
-            var expectedRecipe = MockDatabase.MockRecipes[0] with { };
+            var expectedRecipe = _database.MockRecipes[0] with { };
             expectedRecipe.Instructions[0].Name = updateRecipeContract.Instructions[0].Name!;
             var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
 
@@ -662,8 +661,8 @@ namespace RecipeManager.API.Tests.ServicesTests
             };
             var updateRecipeContract = new UpdateRecipeContract
             {
-                RecipeId = MockDatabase.MockRecipes[1].RecipeId,
-                Instructions = MockDatabase.MockRecipes[1].Instructions
+                RecipeId = _database.MockRecipes[1].RecipeId,
+                Instructions = _database.MockRecipes[1].Instructions
                             .Select(UpdateInstructionContract.FromModel).ToList()
             };
             updateRecipeContract.Instructions.Add(newInstruction);
@@ -671,7 +670,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.UpdateRecipe(updateRecipeContract);
             result.Should().Be(updateRecipeContract.RecipeId);
 
-            var expectedRecipe = MockDatabase.MockRecipes[1] with { };
+            var expectedRecipe = _database.MockRecipes[1] with { };
             expectedRecipe.Instructions.Add(newInstruction.ToModel(updateRecipeContract.RecipeId));
             var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
 
@@ -683,8 +682,8 @@ namespace RecipeManager.API.Tests.ServicesTests
         {
             var updateRecipeContract = new UpdateRecipeContract
             {
-                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
-                Instructions = MockDatabase.MockRecipes[0].Instructions
+                RecipeId = _database.MockRecipes[0].RecipeId,
+                Instructions = _database.MockRecipes[0].Instructions
                             .Select(UpdateInstructionContract.FromModel).ToList()
             };
             updateRecipeContract.Instructions.RemoveAt(0);
@@ -692,7 +691,7 @@ namespace RecipeManager.API.Tests.ServicesTests
             var result = _target.UpdateRecipe(updateRecipeContract);
             result.Should().Be(updateRecipeContract.RecipeId);
 
-            var expectedRecipe = MockDatabase.MockRecipes[0] with { };
+            var expectedRecipe = _database.MockRecipes[0] with { };
             expectedRecipe.Instructions.RemoveAt(0);
             var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
 

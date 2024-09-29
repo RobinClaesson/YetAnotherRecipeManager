@@ -7,12 +7,12 @@ internal static class RecipeVerifier
 {
     public static void VerifyRecipeIEnumerable(IEnumerable<Recipe> result, IEnumerable<Recipe> expected)
     {
-        result.Should().HaveCount(MockDatabase.MockRecipes.Count);
+        result.Should().HaveCount(expected.Count());
 
         var orderedResult = result.OrderBy(r => r.RecipeId);
         var orderedExpected = expected.OrderBy(r => r.RecipeId);
 
-        for (int i = 0; i < MockDatabase.MockRecipes.Count; i++)
+        for (int i = 0; i < result.Count(); i++)
         {
             var expectedRecipe = orderedExpected.ElementAt(i);
             var resultRecipe = orderedResult.ElementAt(i);
