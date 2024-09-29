@@ -505,5 +505,198 @@ namespace RecipeManager.API.Tests.ServicesTests
             _recipeContext.Ingredients.Count().Should().Be(MockDatabase.MockIngredients.Count - 4);
             _recipeContext.Instructions.Count().Should().Be(MockDatabase.MockInstructions.Count - 4);
         }
+
+        [Test]
+        public void UpdateRecipe_NonExistingRecipe_ReturnsNullAndDatabaseUnchanged()
+        {
+            var updateRecipeContract = new UpdateRecipeContract
+            {
+                RecipeId = Guid.NewGuid(),
+                Name = "Updated Recipe",
+                Description = "An updated recipe",
+                Tags = new() { "updated" },
+                Servings = 2,
+                Ingredients = new()
+                {
+                    new UpdateIngredientContract { Name = "Updated Ingredient", Quantity = 2, Unit = Units.Cup }
+                },
+                Instructions = new()
+                {
+                    new UpdateInstructionContract { Name = "Updated Instruction", Order = 1, Description = "Do something else" }
+                }
+            };
+
+            var result = _target.UpdateRecipe(updateRecipeContract);
+
+            result.Should().BeNull();
+            DatabaseVerifier.VerifyUnchangedDatabase(_recipeContext);
+        }
+
+        [Test]
+        public void UpdateRecipe_RecipeParametersChanged_ReturnsRecipeIdAndDatabaseUpdated()
+        {
+            var updateRecipeContract = new UpdateRecipeContract
+            {
+                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
+                Name = "Updated Recipe",
+                Description = "An updated recipe",
+                Tags = new() { "updated" },
+                Servings = 2,
+                Ingredients = null,
+                Instructions = null,
+            };
+
+            var result = _target.UpdateRecipe(updateRecipeContract);
+            result.Should().Be(updateRecipeContract.RecipeId);
+
+            var expectedRecipe = MockDatabase.MockRecipes[0] with
+            {
+                Name = updateRecipeContract.Name,
+                Description = updateRecipeContract.Description,
+                Tags = updateRecipeContract.Tags,
+                Servings = updateRecipeContract.Servings.Value
+            };
+            var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
+
+            RecipeVerifier.VerifyRecipe(resultRecipe!, expectedRecipe);
+        }
+
+        [Test]
+        public void UpdateRecipe_RecipeIngredientsChanged_ReturnsRecipeIdAndDatabaseUpdated()
+        {
+            var updateRecipeContract = new UpdateRecipeContract
+            {
+                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
+                Ingredients = MockDatabase.MockRecipes[0].Ingredients
+                            .Select(UpdateIngredientContract.FromModel).ToList()
+            };
+            updateRecipeContract.Ingredients[0].Name = "Changed ingredient name";
+
+            var result = _target.UpdateRecipe(updateRecipeContract);
+            result.Should().Be(updateRecipeContract.RecipeId);
+
+            var expectedRecipe = MockDatabase.MockRecipes[0] with { };
+            expectedRecipe.Ingredients[0].Name = updateRecipeContract.Ingredients[0].Name!;
+            var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
+
+            RecipeVerifier.VerifyRecipe(resultRecipe!, expectedRecipe);
+        }
+
+        [Test]
+        public void UpdateRecipe_AddedRecipeIngredient_ReturnsRecipieIdAndIngredientAddedToDatabase()
+        {
+            var newIngredient = new UpdateIngredientContract
+            {
+                Name = "New Ingredient",
+                Quantity = 1,
+                Unit = Units.Cup
+            };
+            var updateRecipeContract = new UpdateRecipeContract
+            {
+                RecipeId = MockDatabase.MockRecipes[1].RecipeId,
+                Ingredients = MockDatabase.MockRecipes[1].Ingredients
+                            .Select(UpdateIngredientContract.FromModel).ToList()
+            };
+            updateRecipeContract.Ingredients.Add(newIngredient);
+
+            var result = _target.UpdateRecipe(updateRecipeContract);
+            result.Should().Be(updateRecipeContract.RecipeId);
+
+            var expectedRecipe = MockDatabase.MockRecipes[1] with { };
+            expectedRecipe.Ingredients.Add(newIngredient.ToModel(updateRecipeContract.RecipeId));
+            var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
+
+            RecipeVerifier.VerifyRecipeOnlyEmptyCheckChildrenId(resultRecipe!, expectedRecipe);
+        }
+
+        [Test]
+        public void UpdateRecipe_RemovedRecipeIngredient_ReturnsRecipieIdAndIngredientRemovedFromDatabase()
+        {
+            var updateRecipeContract = new UpdateRecipeContract
+            {
+                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
+                Ingredients = MockDatabase.MockRecipes[0].Ingredients
+                            .Select(UpdateIngredientContract.FromModel).ToList()
+            };
+            updateRecipeContract.Ingredients.RemoveAt(0);
+
+            var result = _target.UpdateRecipe(updateRecipeContract);
+            result.Should().Be(updateRecipeContract.RecipeId);
+
+            var expectedRecipe = MockDatabase.MockRecipes[0] with { };
+            expectedRecipe.Ingredients.RemoveAt(0);
+            var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
+
+            RecipeVerifier.VerifyRecipe(resultRecipe!, expectedRecipe);
+        }
+
+        [Test]
+        public void UpdateRecipe_RecipeInstructionsChanged_ReturnsRecipeIdAndDatabaseUpdated()
+        {
+            var updateRecipeContract = new UpdateRecipeContract
+            {
+                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
+                Instructions = MockDatabase.MockRecipes[0].Instructions
+                            .Select(UpdateInstructionContract.FromModel).ToList()
+            };
+            updateRecipeContract.Instructions[0].Name = "Changed instruction name";
+
+            var result = _target.UpdateRecipe(updateRecipeContract);
+            result.Should().Be(updateRecipeContract.RecipeId);
+
+            var expectedRecipe = MockDatabase.MockRecipes[0] with { };
+            expectedRecipe.Instructions[0].Name = updateRecipeContract.Instructions[0].Name!;
+            var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
+
+            RecipeVerifier.VerifyRecipe(resultRecipe!, expectedRecipe);
+        }
+
+        [Test]
+        public void UpdateRecipe_AddedRecipeInstruction_ReturnsRecipieIdAndInstructionAddedToDatabase()
+        {
+            var newInstruction = new UpdateInstructionContract
+            {
+                Name = "New Instruction",
+                Order = 1,
+                Description = "Do something"
+            };
+            var updateRecipeContract = new UpdateRecipeContract
+            {
+                RecipeId = MockDatabase.MockRecipes[1].RecipeId,
+                Instructions = MockDatabase.MockRecipes[1].Instructions
+                            .Select(UpdateInstructionContract.FromModel).ToList()
+            };
+            updateRecipeContract.Instructions.Add(newInstruction);
+
+            var result = _target.UpdateRecipe(updateRecipeContract);
+            result.Should().Be(updateRecipeContract.RecipeId);
+
+            var expectedRecipe = MockDatabase.MockRecipes[1] with { };
+            expectedRecipe.Instructions.Add(newInstruction.ToModel(updateRecipeContract.RecipeId));
+            var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
+
+            RecipeVerifier.VerifyRecipeOnlyEmptyCheckChildrenId(resultRecipe!, expectedRecipe);
+        }
+
+        [Test]
+        public void UpdateRecipe_RemovedRecipeInstruction_ReturnsRecipieIdAndInstructionRemovedFromDatabase()
+        {
+            var updateRecipeContract = new UpdateRecipeContract
+            {
+                RecipeId = MockDatabase.MockRecipes[0].RecipeId,
+                Instructions = MockDatabase.MockRecipes[0].Instructions
+                            .Select(UpdateInstructionContract.FromModel).ToList()
+            };
+            updateRecipeContract.Instructions.RemoveAt(0);
+
+            var result = _target.UpdateRecipe(updateRecipeContract);
+            result.Should().Be(updateRecipeContract.RecipeId);
+
+            var expectedRecipe = MockDatabase.MockRecipes[0] with { };
+            expectedRecipe.Instructions.RemoveAt(0);
+            var resultRecipe = _target.GetRecipe(updateRecipeContract.RecipeId);
+
+            RecipeVerifier.VerifyRecipe(resultRecipe!, expectedRecipe);
+        }
     }
 }
