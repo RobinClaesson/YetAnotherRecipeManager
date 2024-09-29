@@ -81,4 +81,21 @@ public static class UnitsParser
                 return false;
         }
     }
+
+    public static string GetShortHand(Units unit) => unit switch
+    {
+        Units.Grams => "g",
+        Units.Hectograms => "hg",
+        Units.Kilograms => "kg",
+        Units.Milliliters => "ml",
+        Units.Centiliters => "cl",
+        Units.Deciliters => "dl",
+        Units.Liters => "l",
+        Units.Teaspoon => "tsp",
+        Units.Tablespoon => "tbsp",
+        Units.Cup => "cup",
+        Units.Piece => "pieces",
+        Units.ByTaste => "by taste",
+        _ => string.Empty
+    };
 }

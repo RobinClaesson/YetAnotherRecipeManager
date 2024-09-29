@@ -1,0 +1,22 @@
+﻿@inherits FluxorComponent
+@page "/recipes/{recipeid}"
+@using RecipeManager.Web.Components.ViewRecipe
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudPaper Width="100%" Elevation="3" Style="margin-top: 2rem;">
+        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge"
+                      Style="display: flex; flex-direction: column; gap: 1rem; padding-top: 1rem; padding-bottom: 1rem;">
+
+            <MudText Typo="Typo.h5">@Recipe.Name</MudText>
+            <MudDivider />
+
+            <RecipeInfo Recipe="Recipe" />
+            <MudDivider />
+
+            <RecipeIngredients Ingredients="Recipe.Ingredients" RecipeServings="Recipe.Servings"/>
+            <MudDivider />
+
+            <RecipeInstructions Instructions="Recipe.Instructions" />
+        </MudContainer>
+    </MudPaper>
+</MudContainer>

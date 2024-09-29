@@ -1,0 +1,10 @@
+﻿@inherits FluxorComponent
+
+<MudText Typo="Typo.h6">Info</MudText>
+<MudText Typo="Typo.body1">@Recipe.Description</MudText>
+<MudContainer MaxWidth="MaxWidth.Large" Style="display: flex; flex-direction: row; gap: 0.5rem;">
+    @foreach (var tag in Recipe.Tags)
+    {
+        <MudChip T="string">@tag</MudChip>
+    }
+</MudContainer>

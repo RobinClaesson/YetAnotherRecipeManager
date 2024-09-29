@@ -1,0 +1,13 @@
+﻿@using RecipeManager.Shared.Models
+@inherits FluxorComponent
+
+<MudText Typo="Typo.h6">Instructions</MudText>
+<MudStack>
+    @foreach (var instruction in Instructions.OrderBy(i => i.Order))
+    {
+        <MudPaper Elevation="1" Style="padding: 1rem;">
+            <MudText Typo="Typo.body1"><strong>@instruction.Order: @instruction.Name</strong></MudText>
+            <MudText Typo="Typo.body1">@instruction.Description</MudText>
+        </MudPaper>
+    }
+</MudStack>

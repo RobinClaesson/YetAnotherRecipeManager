@@ -1,0 +1,26 @@
+﻿@using RecipeManager.Shared.Models
+@inherits FluxorComponent
+
+
+<MudDataGrid T="Ingredient" Items="Ingredients">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Ingredients</MudText>
+        <MudSpacer />
+        <MudNumericField @bind-Value="_selectedServings" Label="Servings" Variant="Variant.Outlined" Min="1" />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Ingredient" />
+        <TemplateColumn Title="Quantity">
+            <CellTemplate>
+                @if (context.Item.Unit == Units.None || context.Item.Unit == Units.ByTaste)
+                {
+                    @(UnitsParser.GetShortHand(context.Item.Unit))
+                }
+                else
+                {
+                    @($"{context.Item.Quantity * ServingRatio} {UnitsParser.GetShortHand(context.Item.Unit)}")
+                }
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
