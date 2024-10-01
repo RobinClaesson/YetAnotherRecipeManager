@@ -119,4 +119,11 @@ public class RecipeEffects
 
         await localStorageTask;
     }
+
+    [EffectMethod]
+    public async Task OnReloadSourceAction(ReloadSourceAction action, IDispatcher dispatcher)
+    {
+        await FetchRecipesFromSource(action.RecipeSource, dispatcher);
+    }
+
 }

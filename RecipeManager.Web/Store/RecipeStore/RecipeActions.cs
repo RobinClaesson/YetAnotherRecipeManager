@@ -12,3 +12,4 @@ public record SourceChangedAction(RecipeSource Original, RecipeSource Updated);
 public record SourceRemovedAction(RecipeSource RecipeSource);
 
 public record ResetLocalSourceRecipesAction();
+public record ReloadSourceAction(RecipeSource RecipeSource);

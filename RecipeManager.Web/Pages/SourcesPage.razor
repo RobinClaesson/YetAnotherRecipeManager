@@ -26,15 +26,24 @@
                     @if (context.Item.Name == Constants.LocalRecipeSourceName
                     && context.Item.Name == Constants.LocalRecipeSourceName)
                     {
-                        <MudButton Variant="Variant.Outlined" OnClick="ResetLocalSourceRecipesAsync">
-                            Reset
-                        </MudButton>
+                        <MudTooltip Text="Reset Local Recipes">
+                            <MudButton Variant="Variant.Outlined" OnClick="ResetLocalSourceRecipesAsync">
+                                Reset
+                            </MudButton>
+                        </MudTooltip>
                     }
                     else
                     {
                         <MudButtonGroup>
-                            <MudIconButton Icon="@Icons.Material.TwoTone.Edit" OnClick="() => EditSourceAsync(context.Item)" />
-                            <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveSourceAsync(context.Item)" />
+                            <MudTooltip Text="Reload Source Recipes">
+                                <MudIconButton Icon="@Icons.Material.Filled.Autorenew" OnClick="() => ReloadSource(context.Item)" />
+                            </MudTooltip>
+                            <MudTooltip Text="Edit Source">
+                                <MudIconButton Icon="@Icons.Material.TwoTone.Edit" OnClick="() => EditSourceAsync(context.Item)" />
+                            </MudTooltip>
+                            <MudTooltip Text="Remove Source">
+                                <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveSourceAsync(context.Item)" />
+                            </MudTooltip>
                         </MudButtonGroup>
                     }
 
