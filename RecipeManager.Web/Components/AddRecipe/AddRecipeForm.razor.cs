@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MudBlazor;
 using RecipeManager.Shared.Contracts;
 using RecipeManager.Shared.Models;
+using RecipeManager.Web.Components.Sources;
 using RecipeManager.Web.Models.RecipeStore;
 using RecipeManager.Web.Store.RecipeStore;
 
@@ -16,6 +17,9 @@ public partial class AddRecipeForm
 
     [Inject]
     IDispatcher Dispatcher { get; set; } = default!;
+
+    [Inject]
+    IDialogService DialogService { get; set; } = default!;
 
     [Parameter]
     public RecipeContract RecipeContract { get; set; } = new() { Servings = 4 };
@@ -33,6 +37,36 @@ public partial class AddRecipeForm
     {
         base.OnInitialized();
         RecipeSource = RecipeState.Value.RecipieCollections.Select(x => x.Source).FirstOrDefault() ?? RecipeSource;
+        SubscribeToAction<AddRecipeToSourceFailedAction>(HandleAddRecipeToSourceFailedAction);
+    }
+
+    private void HandleAddRecipeToSourceFailedAction(AddRecipeToSourceFailedAction action)
+    {
+        ShowAddRecipeFailedDialogAsyc(action);
+    }
+
+    private async Task ShowAddRecipeFailedDialogAsyc(AddRecipeToSourceFailedAction action)
+    {
+
+        var parameters = new DialogParameters
+        {
+            { nameof(AddRecipeFailedDialog.SourceName), RecipeSource.Name }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+        };
+
+        var dialog = await DialogService.ShowAsync<AddRecipeFailedDialog>("Failure!", parameters, options);
+        var result = await dialog.Result;
+
+        if(result!.Data is bool saveToLocal && saveToLocal)
+        {
+            RecipeSource = new() { Name = Constants.LocalRecipeSourceName, Url = Constants.LocalRecipeSourceUrl };
+            Dispatcher.Dispatch(new AddRecipeClickedAction(RecipeContract, RecipeSource));
+        }
     }
 
     private void HandleValidSubmit()
