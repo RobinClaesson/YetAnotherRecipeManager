@@ -8,6 +8,7 @@
 <EditForm Model="@RecipeContract" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
     <MudStack Spacing="4">
+        <MudButton Variant="Variant.Outlined" OnClick="ClearForm" EndIcon="@Icons.Material.TwoTone.Delete">Clear Recipe</MudButton>
         <MudSelect T="RecipeSource" @bind-Value="RecipeSource" Label="Select source to add to" Variant="Variant.Outlined">
             @foreach (var source in RecipeSources)
             {
@@ -28,12 +29,12 @@
                 }
             </MudChipSet>
         </MudContainer>
-        <MudGrid Justify="Justify.Center">
+        <MudGrid Justify="Justify.FlexEnd">
             <MudItem xs="6">
                 <MudTextField @bind-Value="_currentTagEntry" Label="New Tag" Variant="Variant.Text" />
             </MudItem>
             <MudItem xs="6">
-                <MudButton FullWidth="true" Variant="Variant.Outlined" OnClick="AddTag">Add Tag</MudButton>
+                <MudButton FullWidth="true" Variant="Variant.Outlined" OnClick="AddTag" EndIcon="@Icons.Material.TwoTone.Tag">Add Tag</MudButton>
             </MudItem>
         </MudGrid>
         <MudDivider />
@@ -67,12 +68,12 @@
                 </TemplateColumn>
                 <TemplateColumn Context="ingredientContext">
                     <CellTemplate>
-                        <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveIngredient(ingredientContext.Item)">Remove</MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.TwoTone.Clear" OnClick="() => RemoveIngredient(ingredientContext.Item)">Remove</MudIconButton>
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>
         </MudDataGrid>
-        <MudButton Variant="Variant.Outlined" OnClick="AddIngredient" StartIcon="@Icons.Material.TwoTone.AddCircle">Add Ingredient</MudButton>
+        <MudButton Variant="Variant.Outlined" OnClick="AddIngredient" EndIcon="@Icons.Material.TwoTone.AddCircle">Add Ingredient</MudButton>
         <MudDivider />
 
         <MudText Typo="Typo.h6">Instructions</MudText>
@@ -89,7 +90,7 @@
                         <MudButtonGroup Vertical>
                             <MudIconButton Icon="@Icons.Material.TwoTone.ArrowUpward" OnClick="() => MoveInstructionUp(instruction)"
                                            Color="Color.Inherit" Size="Size.Small" Disabled="instruction.Order == 1" />
-                            <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveInstruction(instruction)"
+                            <MudIconButton Icon="@Icons.Material.TwoTone.Clear" OnClick="() => RemoveInstruction(instruction)"
                                            Color="Color.Inherit" Size="Size.Small" />
                             <MudIconButton Icon="@Icons.Material.TwoTone.ArrowDownward" OnClick="() => MoveInstructionDown(instruction)"
                                            Color="Color.Inherit" Size="Size.Small" Disabled="instruction.Order == RecipeContract.Instructions.Count" />
@@ -98,9 +99,9 @@
                 </MudPaper>
             }
         </MudStack>
-        <MudButton Variant="Variant.Outlined" OnClick="AddInstruction" StartIcon="@Icons.Material.TwoTone.AddTask">Add Instruction</MudButton>
+        <MudButton Variant="Variant.Outlined" OnClick="AddInstruction" EndIcon="@Icons.Material.TwoTone.AddTask">Add Instruction</MudButton>
         <MudDivider />
 
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.TwoTone.NoteAdd">Add Recipe</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" EndIcon="@Icons.Material.TwoTone.NoteAdd">Add Recipe</MudButton>
     </MudStack>
 </EditForm>

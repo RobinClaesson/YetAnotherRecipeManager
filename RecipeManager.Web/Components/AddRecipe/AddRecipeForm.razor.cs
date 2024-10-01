@@ -91,4 +91,10 @@ public partial class AddRecipeForm
         RecipeContract.Instructions[index + 1].Order++;
         RecipeContract.Instructions[index].Order--;
     }
+
+    private void ClearForm()
+    {
+        RecipeContract = new RecipeContract { Servings = 4 };
+        RecipeSource = RecipeState.Value.RecipieCollections.Select(x => x.Source).FirstOrDefault() ?? RecipeSource;
+    }
 }
