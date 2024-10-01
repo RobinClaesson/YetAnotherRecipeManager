@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using RecipeManager.Web.Store.CommonStore;
 
-namespace RecipeManager.Web.Layout;
+namespace RecipeManager.Web.Components.MainLayout;
 
 public partial class ToastProvider
 {
@@ -16,6 +16,5 @@ public partial class ToastProvider
         SubscribeToAction<ErrorOccurredAction>(ShowErrorToast);
     }
 
-    public void ShowErrorToast(ErrorOccurredAction action)
-        => ToastService.ShowError(action.ErrorMessage);
+    public void ShowErrorToast(ErrorOccurredAction action) => ToastService.ShowError(action.ErrorMessage);
 }
