@@ -1,0 +1,106 @@
+﻿@using RecipeManager.Shared.Contracts
+@using RecipeManager.Shared.Models
+@using RecipeManager.Web.Models.RecipeStore
+@inherits FluxorComponent
+
+
+
+<EditForm Model="@RecipeContract" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <MudStack Spacing="4">
+        <MudSelect T="RecipeSource" @bind-Value="RecipeSource" Label="Select source to add to" Variant="Variant.Outlined">
+            @foreach (var source in RecipeSources)
+            {
+                <MudSelectItem Value="source">@source.Name</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudTextField @bind-Value="RecipeContract.Name" Label="Name" Variant="Variant.Text" />
+        <MudTextField @bind-Value="RecipeContract.Description" Label="Description" Variant="Variant.Text" />
+        <MudDivider />
+
+        <MudText Typo="Typo.h6">Tags</MudText>
+        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Style="display: flex; flex-direction: row; gap: 1rem; flex-wrap: wrap">
+            <MudChipSet T="string" AllClosable OnClose="RemoveTag">
+                @foreach (var tag in RecipeContract.Tags)
+                {
+                    <MudChip Text="@tag" Color="Color.Primary" Variant="Variant.Outlined" />
+                }
+            </MudChipSet>
+        </MudContainer>
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="6">
+                <MudTextField @bind-Value="_currentTagEntry" Label="New Tag" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem xs="6">
+                <MudButton FullWidth="true" Variant="Variant.Outlined" OnClick="AddTag">Add Tag</MudButton>
+            </MudItem>
+        </MudGrid>
+        <MudDivider />
+
+        <MudText Typo="Typo.h6">Ingredients</MudText>
+        <MudDataGrid T="IngredientContract" Items="RecipeContract.Ingredients">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudNumericField @bind-Value="RecipeContract.Servings" Label="Servings" Variant="Variant.Outlined" Min="1" />
+            </ToolBarContent>
+            <Columns>
+                <TemplateColumn Title="Ingredient" Context="ingredientContext">
+                    <CellTemplate>
+                        <MudTextField @bind-Value="ingredientContext.Item.Name" Variant="Variant.Text" />
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Quantity" Context="ingredientContext">
+                    <CellTemplate>
+                        <MudNumericField @bind-Value="ingredientContext.Item.Quantity" Format="N1" Variant="Variant.Text" Step="1" Min="0.0" />
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Unit" Context="ingredientContext">
+                    <CellTemplate>
+                        <MudSelect @bind-Value="ingredientContext.Item.Unit" Variant="Variant.Text">
+                            @foreach (var unit in AllUnits)
+                            {
+                                <MudSelectItem Value="unit">@UnitsParser.GetLongHand(unit)</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Context="ingredientContext">
+                    <CellTemplate>
+                        <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveIngredient(ingredientContext.Item)">Remove</MudIconButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+        <MudButton Variant="Variant.Outlined" OnClick="AddIngredient" StartIcon="@Icons.Material.TwoTone.AddCircle">Add Ingredient</MudButton>
+        <MudDivider />
+
+        <MudText Typo="Typo.h6">Instructions</MudText>
+        <MudStack>
+            @foreach (var instruction in RecipeContract.Instructions)
+            {
+                <MudPaper Elevation="1" Style="padding: 1rem 0;">
+                    <MudContainer MaxWidth="MaxWidth.Large" Style="display:flex; flex-direction: row; justify-content: start; align-items: flex-start; gap: 1rem;">
+                        <MudText Typo="Typo.body1"><strong>@instruction.Order:</strong></MudText>
+                        <MudStack Style="width: 100%;">
+                            <MudTextField @bind-Value="instruction.Name" Variant="Variant.Text" Label="Title" />
+                            <MudTextField @bind-Value="instruction.Description" Variant="Variant.Text" Label="Description" />
+                        </MudStack>
+                        <MudButtonGroup Vertical>
+                            <MudIconButton Icon="@Icons.Material.TwoTone.ArrowUpward" OnClick="() => MoveInstructionUp(instruction)"
+                                           Color="Color.Inherit" Size="Size.Small" Disabled="instruction.Order == 1" />
+                            <MudIconButton Icon="@Icons.Material.TwoTone.Delete" OnClick="() => RemoveInstruction(instruction)"
+                                           Color="Color.Inherit" Size="Size.Small" />
+                            <MudIconButton Icon="@Icons.Material.TwoTone.ArrowDownward" OnClick="() => MoveInstructionDown(instruction)"
+                                           Color="Color.Inherit" Size="Size.Small" Disabled="instruction.Order == RecipeContract.Instructions.Count" />
+                        </MudButtonGroup>
+                    </MudContainer>
+                </MudPaper>
+            }
+        </MudStack>
+        <MudButton Variant="Variant.Outlined" OnClick="AddInstruction" StartIcon="@Icons.Material.TwoTone.AddTask">Add Instruction</MudButton>
+        <MudDivider />
+
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" StartIcon="@Icons.Material.TwoTone.NoteAdd">Add Recipe</MudButton>
+    </MudStack>
+</EditForm>

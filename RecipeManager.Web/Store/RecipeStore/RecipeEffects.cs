@@ -3,8 +3,10 @@ using Fluxor;
 using RecipeManager.Shared.Models;
 using RecipeManager.Web.Models.RecipeStore;
 using RecipeManager.Web.Store.CommonStore;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace RecipeManager.Web.Store.RecipeStore;
 
@@ -12,6 +14,10 @@ public class RecipeEffects
 {
     private readonly ILocalStorageService _localStorage;
     private readonly HttpClient _httpClient;
+    private readonly JsonSerializerOptions _localRecipesSerializerOptions = new()
+    {
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
 
     public RecipeEffects(ILocalStorageService localStorage, HttpClient httpClient)
     {
@@ -126,4 +132,55 @@ public class RecipeEffects
         await FetchRecipesFromSource(action.RecipeSource, dispatcher);
     }
 
+    [EffectMethod]
+    public async Task OnAddRecipeClickedAction(AddRecipeClickedAction action, IDispatcher dispatcher)
+    {
+        if (action.Source.Name == Constants.LocalRecipeSourceName && action.Source.Url == Constants.LocalRecipeSourceUrl)
+        {
+            var recipe = action.Recipe.ToModel();
+            recipe.RecipeId = Guid.NewGuid();
+            foreach (var ingredient in recipe.Ingredients)
+            {
+                ingredient.RecipeId = recipe.RecipeId;
+                ingredient.IngredientId = Guid.NewGuid();
+            }
+            foreach (var instruction in recipe.Instructions)
+            {
+                instruction.RecipeId = recipe.RecipeId;
+                instruction.InstructionId = Guid.NewGuid();
+            }
+
+            await InitLocalStorage();
+
+            var localRecipes = await _localStorage.GetItemAsync<List<Recipe>>(Constants.LocalStorageLocalRecipes) ?? new();
+            localRecipes.Add(recipe);
+
+            var serialized = JsonSerializer.Serialize(localRecipes, typeof(List<Recipe>), _localRecipesSerializerOptions);
+            await _localStorage.SetItemAsStringAsync(Constants.LocalStorageLocalRecipes, serialized);
+            dispatcher.Dispatch(new RecipeAddedAction(recipe, action.Source));
+        }
+        else
+        {
+            var httpContent = JsonContent.Create(action.Recipe);
+            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            try
+            {
+                var response = await _httpClient.PostAsync($"{action.Source.Url}/api/Recipe/AddRecipe", httpContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    var recipeId = await response.Content.ReadFromJsonAsync<Guid>();
+                    var recipe = await _httpClient.GetFromJsonAsync<Recipe>($"{action.Source.Url}/api/Recipe/GetRecipe?recipeId={recipeId}");
+                    dispatcher.Dispatch(new RecipeAddedAction(recipe!, action.Source));
+                }
+                else 
+                    dispatcher.Dispatch(new AddRecipeToSourceFailedAction());
+            }
+            catch
+            {
+                dispatcher.Dispatch(new AddRecipeToSourceFailedAction());
+            }
+        }
+
+    }
 }

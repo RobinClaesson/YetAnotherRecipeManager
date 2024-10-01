@@ -1,0 +1,19 @@
+﻿@using RecipeManager.Web.Components.AddRecipe;
+@inherits FluxorComponent
+@page "/add"
+
+<PageTitle>YARM - Create</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudPaper Width="100%" Elevation="3" Style="margin-top: 2rem; margin-bottom: 2rem;">
+        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge"
+                      Style="display: flex; flex-direction: column; gap: 1rem; padding-top: 1rem; padding-bottom: 1rem;">
+
+            <MudText Typo="Typo.h5">Create a new recipe</MudText>
+            <MudDivider />
+            
+            <AddRecipeForm />
+
+        </MudContainer>
+    </MudPaper>
+</MudContainer>

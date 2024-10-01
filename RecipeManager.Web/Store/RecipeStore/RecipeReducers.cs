@@ -103,4 +103,15 @@ public static class RecipeReducers
 
         return next;
     }
+
+    [ReducerMethod]
+    public static RecipeState OnRecipeAddedAction(RecipeState state, RecipeAddedAction action)
+    {
+        var next = state with { };
+
+        var collection = next.RecipieCollections.First(c => c.Source.Url == action.Source.Url);
+        collection.Recipes.Add(action.Recipe);
+
+        return next;
+    }
 }

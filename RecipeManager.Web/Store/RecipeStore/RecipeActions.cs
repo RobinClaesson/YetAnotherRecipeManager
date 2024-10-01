@@ -1,4 +1,5 @@
-﻿using RecipeManager.Shared.Models;
+﻿using RecipeManager.Shared.Contracts;
+using RecipeManager.Shared.Models;
 using RecipeManager.Web.Models.RecipeStore;
 
 namespace RecipeManager.Web.Store.RecipeStore;
@@ -13,3 +14,7 @@ public record SourceRemovedAction(RecipeSource RecipeSource);
 
 public record ResetLocalSourceRecipesAction();
 public record ReloadSourceAction(RecipeSource RecipeSource);
+
+public record AddRecipeClickedAction(RecipeContract Recipe, RecipeSource Source);
+public record RecipeAddedAction(Recipe Recipe, RecipeSource Source);
+public record AddRecipeToSourceFailedAction();

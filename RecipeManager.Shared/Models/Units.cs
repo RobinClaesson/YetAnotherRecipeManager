@@ -101,6 +101,25 @@ public static class UnitsParser
         Units.Cup => "cup",
         Units.Piece => "pieces",
         Units.ByTaste => "by taste",
+        Units.None => "none",
+        _ => string.Empty
+    };
+
+    public static string GetLongHand(Units unit) => unit switch
+    {
+        Units.Grams => "Gram",
+        Units.Hectograms => "Hectogram",
+        Units.Kilograms => "Kilogram",
+        Units.Milliliters => "Milliliter",
+        Units.Centiliters => "Centiliter",
+        Units.Deciliters => "Deciliter",
+        Units.Liters => "Liter",
+        Units.Teaspoon => "Teaspoon",
+        Units.Tablespoon => "Tablespoon",
+        Units.Cup => "Cup",
+        Units.Piece => "Piece",
+        Units.ByTaste => "By Taste",
+        Units.None => "None",
         _ => string.Empty
     };
 }
