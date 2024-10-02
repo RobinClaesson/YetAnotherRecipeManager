@@ -4,6 +4,7 @@ using RecipeManager.API;
 using RecipeManager.API.CommandLine;
 using RecipeManager.API.Services;
 using RecipeManager.Shared.Db;
+using System.Net;
 using System.Text.Json.Serialization;
 
 Parser.Default.ParseArguments<RunOptions>(args)
@@ -14,7 +15,7 @@ void BuildAndRun(RunOptions options)
 {
     if(!options.UseHttp && !options.UseHttps)
     {
-        Console.WriteLine("Error: Either HTTP or HTTPS port must be set");
+        Console.WriteLine("Error: Either HTTP or HTTPS port with CertPath must be set");
         return;
     }
 
@@ -39,7 +40,17 @@ void BuildAndRun(RunOptions options)
     builder.Services.AddScoped<ITagService, TagService>();
 
     // Add the ports from the command line options
-    builder.WebHost.UseUrls(options.GetHostUrls());
+    //builder.WebHost.UseUrls(options.GetHostUrls());
+    builder.WebHost.ConfigureKestrel((context, serverOptions ) =>
+    {
+        if(options.UseHttp)
+            serverOptions.Listen(IPAddress.Any, options.HttpPort!.Value);
+        if (options.UseHttps)
+            serverOptions.Listen(IPAddress.Loopback, options.HttpsPort!.Value, listenOptions =>
+            {
+                listenOptions.UseHttps(options.CertPath!);
+            });
+    });
 
     builder.Services.AddCors(options =>
     {

@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Microsoft.Extensions.Primitives;
 using RecipeManager.Shared;
 
 namespace RecipeManager.API.CommandLine;
@@ -12,7 +13,9 @@ public class RunOptions
 
     [Option('s', "https-port", Required = false, HelpText = "The port to listen for HTTPS requests. HTTPS turned of if not set.")]
     public int? HttpsPort { get; set; } = null;
-    public bool UseHttps => HttpsPort != null;
+
+    [Option('c', "cert-path", Required = false, HelpText = "The path to the certificate file. Required for HTTPS.")]
+    public string? CertPath { get; set; }
 
     [Option('l', "localhost", Required = false, HelpText = "Allow connection only from localhost.")]
     public bool LocalHost { get; set; } = false;
@@ -23,6 +26,7 @@ public class RunOptions
     [Option('d', "db-path", Required = false, HelpText = $"The path to the SQLite database. Default: '{Defaults.DbPath}'")]
     public string DbPath { get; set; } = Defaults.DbPath;
 
+    public bool UseHttps => HttpsPort != null && CertPath!= null;
     public string[] GetHostUrls()
     {
         var host = LocalHost ? "localhost" : "[::]";
